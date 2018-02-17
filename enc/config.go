@@ -6,6 +6,6 @@ type Config struct {
 	ENC *ENC `json:"enc"`
 }
 
-func Config() *Config {
-
+func NewConfig() *Config {
+	return &Config{}
 }

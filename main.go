@@ -1,7 +1,6 @@
 package main
 
-import (
-)
+import ()
 
 // our main function
 func main() {
