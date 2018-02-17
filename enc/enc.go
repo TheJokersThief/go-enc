@@ -42,12 +42,12 @@ func (enc *ENC) AddNodegroup(name string, parent string, classes map[string]inte
 }
 
 func (enc *ENC) RemoveNodegroup(name string) (*ENCNodegroup, error) {
-	if _, ok := enc.Nodegroups[name]; !ok {
-		return &ENCNodegroup{}, errors.New("Nodegroup does not exist")
-	} else {
-		nodegroup := enc.Nodegroups[name]
+	if val, ok := enc.Nodegroups[name]; ok {
+		nodegroup := val
 		delete(enc.Nodegroups, name)
 		return &nodegroup, nil
+	} else {
+		return &ENCNodegroup{}, errors.New("Nodegroup does not exist")
 	}
 }
 
