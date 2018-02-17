@@ -51,14 +51,18 @@ func (enc *ENC) RemoveNodegroup(name string) (*ENCNodegroup, error) {
 	}
 }
 
-func (enc *ENC) GetNodegroup()    {}
-func (enc *ENC) AddNode()         {}
-func (enc *ENC) RemoveNode()      {}
-func (enc *ENC) GetNode()         {}
-func (enc *ENC) AddParameter()    {}
-func (enc *ENC) SetParameter()    {}
-func (enc *ENC) RemoveParameter() {}
-func (enc *ENC) AddClass()        {}
-func (enc *ENC) RemoveClass()     {}
-func (enc *ENC) SetClasses()      {}
-func (enc *ENC) SetParent()       {}
+func (enc *ENC) GetNodegroup()         {}
+func (enc *ENC) AddNode()              {}
+func (enc *ENC) RemoveNode()           {}
+func (enc *ENC) GetNode()              {}
+func (enc *ENC) AddParameter()         {}
+func (enc *ENC) SetParameter()         {}
+func (enc *ENC) RemoveParameter()      {}
+func (enc *ENC) AddClass()             {}
+func (enc *ENC) RemoveClass()          {}
+func (enc *ENC) SetClasses()           {}
+func (enc *ENC) AddClassParameter()    {}
+func (enc *ENC) RemoveClassParameter() {}
+func (enc *ENC) SetClassParameter()    {}
+func (enc *ENC) SetParent()            {}
+func (enc *ENC) SetEnvironment()       {}
