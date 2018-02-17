@@ -3,7 +3,7 @@ package main
 import ()
 
 type Config struct {
-	ENC *ENC `json:"enc"`
+	ENC *ENC
 }
 
 func NewConfig() *Config {
