@@ -7,8 +7,8 @@ type ENC struct {
 }
 
 type ENCNode struct {
-	Parent     string             `json:"parent"`
-	Classes    *[]interface{}     `json:"classes"`
-	Nodes      *[]string          `json:"nodes"`
-	Parameters *map[string]string `json:"parameter"`
+	Parent     string                  `json:"parent"`
+	Classes    *map[string]interface{} `json:"classes"`
+	Nodes      *[]string               `json:"nodes"`
+	Parameters *map[string]interface{} `json:"parameter"`
 }
