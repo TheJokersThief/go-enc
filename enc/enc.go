@@ -5,10 +5,11 @@ import (
 )
 
 type ENCNodegroup struct {
-	Parent     string                 `json:"parent", yaml:"parent"`
-	Classes    map[string]interface{} `json:"classes", yaml:"classes"`
-	Nodes      []string               `json:"nodes", yaml:"nodes"`
-	Parameters map[string]interface{} `json:"parameter", yaml:"parameter"`
+	Parent      string                 `json:"parent", yaml:"parent"`
+	Classes     map[string]interface{} `json:"classes", yaml:"classes"`
+	Nodes       []string               `json:"nodes", yaml:"nodes"`
+	Parameters  map[string]interface{} `json:"parameter", yaml:"parameter"`
+	Environment string                 `json:"environment", yaml:"environment"`
 }
 
 type ENC struct {
