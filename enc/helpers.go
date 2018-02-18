@@ -1,6 +1,8 @@
 package enc
 
-import ()
+import (
+	"fmt"
+)
 
 func reverse(s []string) []string {
 	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
@@ -18,4 +20,29 @@ func removeByValueSS(a []string, val string) []string {
 	}
 
 	return newArray
+}
+
+func err_check(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+func stringifyYAMLMapKeys(in interface{}) interface{} {
+	switch in := in.(type) {
+	case []interface{}:
+		res := make([]interface{}, len(in))
+		for i, v := range in {
+			res[i] = stringifyYAMLMapKeys(v)
+		}
+		return res
+	case map[interface{}]interface{}:
+		res := make(map[string]interface{})
+		for k, v := range in {
+			res[fmt.Sprintf("%v", k)] = stringifyYAMLMapKeys(v)
+		}
+		return res
+	default:
+		return in
+	}
 }

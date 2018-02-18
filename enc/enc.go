@@ -2,7 +2,6 @@ package enc
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 	"strings"
 
@@ -14,13 +13,13 @@ type Nodegroup struct {
 	Parent      string                 `json:"parent" yaml:"parent"`
 	Classes     map[string]interface{} `json:"classes" yaml:"classes"`
 	Nodes       []string               `json:"nodes" yaml:"nodes"`
-	Parameters  map[string]interface{} `json:"parameter" yaml:"parameter"`
+	Parameters  map[string]interface{} `json:"parameters" yaml:"parameters"`
 	Environment string                 `json:"environment" yaml:"environment"`
 }
 
 // ENC represents the entire structure of the External Node Classifier
 type ENC struct {
-	Nodegroups map[string]Nodegroup `json:"nodes" yaml:"nodes"`
+	Nodegroups map[string]Nodegroup
 	Nodes      *trie.Trie
 	ConfigType string
 }
@@ -36,17 +35,25 @@ func NewENC(configType string) *ENC {
 
 // AddNodegroup adds a Nodegroup to the ENC
 func (enc *ENC) AddNodegroup(name string, parent string, classes map[string]interface{}, nodes []string, params map[string]interface{}) (*Nodegroup, error) {
+
 	nodegroup := Nodegroup{
 		Parent:     parent,
 		Classes:    classes,
-		Nodes:      nodes,
 		Parameters: params,
+	}
+
+	if len(nodes) == 0 {
+		nodegroup.Nodes = []string{}
 	}
 
 	if _, ok := enc.Nodegroups[name]; !ok {
 		enc.Nodegroups[name] = nodegroup
 	} else {
 		return &Nodegroup{}, errors.New("Nodegroup already exists")
+	}
+
+	if len(nodes) != 0 {
+		enc.AddNodes(name, nodes)
 	}
 
 	return &nodegroup, nil
@@ -103,9 +110,7 @@ func (enc *ENC) AddNodes(nodegroup string, nodes []string) (*Nodegroup, error) {
 // getParentChain generates a path of parents until it reaches the top
 func (enc *ENC) getParentChain(nodegroupName string) []string {
 	nodegroup, err := enc.GetNodegroup(nodegroupName)
-	if err != nil {
-		panic(err)
-	}
+	err_check(err)
 
 	parents := []string{nodegroupName}
 	parent := nodegroup.Parent
@@ -174,8 +179,6 @@ func (enc *ENC) mergeNodegroups(ngA *Nodegroup, ngB *Nodegroup) *Nodegroup {
 		Nodes:       ngB.Nodes,
 		Environment: ngA.Environment,
 	}
-
-	fmt.Printf("ENV: %#v\n", ngB.Environment != "")
 
 	if ngB.Environment != "" {
 		newNG.Environment = ngB.Environment
