@@ -36,3 +36,16 @@
 [[constraint]]
   name = "github.com/alecthomas/kingpin"
   version = "2.2.6"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/derekparker/trie"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/jinzhu/copier"
+
+[[constraint]]
+  name = "github.com/stretchr/testify"
+  branch = "dev"
+  version = "1.2.1"
