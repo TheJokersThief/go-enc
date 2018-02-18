@@ -41,12 +41,6 @@
   version = "v1.6.1"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/jinzhu/copier"
-  packages = ["."]
-  revision = "db4671f3a9b8df855e993f7c94ec5ef1ffb0a23b"
-
-[[projects]]
   name = "github.com/pmezard/go-difflib"
   packages = ["difflib"]
   revision = "792786c7400a136282c1664665ae0a8db921c6c2"
@@ -67,6 +61,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7b6ae5bac29193406b588a2f7fd55752dc3c255515c4ce410a8b93fb4b55cfb9"
+  inputs-digest = "4d21654d299dc13d587422d0a571299d6039e042c39268765ac204be03ea56e8"
   solver-name = "gps-cdcl"
   solver-version = 1
