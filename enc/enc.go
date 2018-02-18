@@ -110,7 +110,7 @@ func (enc *ENC) AddNodes(nodegroup string, nodes []string) (*Nodegroup, error) {
 // getParentChain generates a path of parents until it reaches the top
 func (enc *ENC) getParentChain(nodegroupName string) []string {
 	nodegroup, err := enc.GetNodegroup(nodegroupName)
-	err_check(err)
+	errCheck(err)
 
 	parents := []string{nodegroupName}
 	parent := nodegroup.Parent
