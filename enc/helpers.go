@@ -10,12 +10,12 @@ func reverse(s []string) []string {
 }
 
 func removeByValueSS(a []string, val string) []string {
-	new_array := make([]string, 0)
+	newArray := make([]string, 0)
 	for _, x := range a {
 		if x != val {
-			new_array = append(new_array, x)
+			newArray = append(newArray, x)
 		}
 	}
 
-	return new_array
+	return newArray
 }

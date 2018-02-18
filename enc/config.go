@@ -2,10 +2,10 @@ package enc
 
 import ()
 
-type Config struct {
-	ENC *ENC
-}
+// type Config struct {
+// 	ENC *ENC
+// }
 
-func NewConfig() *Config {
-	return &Config{}
-}
+// func NewConfig() *Config {
+// 	return &Config{}
+// }

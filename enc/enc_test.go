@@ -9,10 +9,10 @@ import (
 
 func TestNewENC(t *testing.T) {
 	assert := assert.New(t)
-	nodes_trie := trie.New()
+	nodesTrie := trie.New()
 	want := ENC{
-		Nodegroups: map[string]ENCNodegroup{},
-		Nodes:      nodes_trie,
+		Nodegroups: map[string]Nodegroup{},
+		Nodes:      nodesTrie,
 		ConfigType: "json",
 	}
 
@@ -23,7 +23,7 @@ func TestNewENC(t *testing.T) {
 func TestAddNodegroup(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent:      "",
 		Classes:     make(map[string]interface{}, 0),
 		Nodes:       []string{},
@@ -31,27 +31,26 @@ func TestAddNodegroup(t *testing.T) {
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"want_nodegroup": want_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"wantNodegroup": wantNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	got_enc := NewENC("json")
-	empty_generic_map := make(map[string]interface{}, 0)
-	got_nodegroup, nodegroup_err := got_enc.AddNodegroup("want_nodegroup", "", empty_generic_map, []string{}, empty_generic_map)
+	gotEnc := NewENC("json")
+	gotNodegroup, nodegroupErr := gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 
-	assert.Equal(want_enc, *got_enc)
-	assert.Equal(want_nodegroup, *got_nodegroup)
-	assert.Nil(nodegroup_err)
+	assert.Equal(wantEnc, *gotEnc)
+	assert.Equal(wantNodegroup, *gotNodegroup)
+	assert.Nil(nodegroupErr)
 }
 
 func TestRemoveNodegroup(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent:      "",
 		Classes:     make(map[string]interface{}, 0),
 		Nodes:       []string{},
@@ -59,26 +58,25 @@ func TestRemoveNodegroup(t *testing.T) {
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{},
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	got_enc := NewENC("json")
-	empty_generic_map := make(map[string]interface{}, 0)
-	got_enc.AddNodegroup("want_nodegroup", "", empty_generic_map, []string{}, empty_generic_map)
-	got_nodegroup, nodegroup_err := got_enc.RemoveNodegroup("want_nodegroup")
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotNodegroup, nodegroupErr := gotEnc.RemoveNodegroup("wantNodegroup")
 
-	assert.Equal(want_enc, *got_enc)
-	assert.Equal(want_nodegroup, *got_nodegroup)
-	assert.Nil(nodegroup_err)
+	assert.Equal(wantEnc, *gotEnc)
+	assert.Equal(wantNodegroup, *gotNodegroup)
+	assert.Nil(nodegroupErr)
 }
 
 func TestGetNodegroup(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent:      "",
 		Classes:     make(map[string]interface{}, 0),
 		Nodes:       []string{},
@@ -86,29 +84,28 @@ func TestGetNodegroup(t *testing.T) {
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"want_nodegroup": want_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"wantNodegroup": wantNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	got_enc := NewENC("json")
-	empty_generic_map := make(map[string]interface{}, 0)
-	got_enc.AddNodegroup("want_nodegroup", "", empty_generic_map, []string{}, empty_generic_map)
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 
-	got_nodegroup, nodegroup_err := got_enc.GetNodegroup("want_nodegroup")
+	gotNodegroup, nodegroupErr := gotEnc.GetNodegroup("wantNodegroup")
 
-	assert.Equal(want_enc, *got_enc)
-	assert.Equal(want_nodegroup, *got_nodegroup)
-	assert.Nil(nodegroup_err)
+	assert.Equal(wantEnc, *gotEnc)
+	assert.Equal(wantNodegroup, *gotNodegroup)
+	assert.Nil(nodegroupErr)
 }
 
 func TestAddNode(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent:  "",
 		Classes: make(map[string]interface{}, 0),
 		Nodes: []string{
@@ -118,32 +115,31 @@ func TestAddNode(t *testing.T) {
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"want_nodegroup": want_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"wantNodegroup": wantNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	got_enc := NewENC("json")
-	empty_generic_map := make(map[string]interface{}, 0)
-	got_enc.AddNodegroup("want_nodegroup", "", empty_generic_map, []string{}, empty_generic_map)
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 
-	got_nodegroup, nodegroup_err := got_enc.AddNode("want_nodegroup", "node-0001")
+	gotNodegroup, nodegroupErr := gotEnc.AddNode("wantNodegroup", "node-0001")
 
 	// We aren't testing the trie package
-	want_enc.Nodes = got_enc.Nodes
+	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Equal(want_enc, *got_enc)
-	assert.Equal(want_nodegroup, *got_nodegroup)
-	assert.Nil(nodegroup_err)
+	assert.Equal(wantEnc, *gotEnc)
+	assert.Equal(wantNodegroup, *gotNodegroup)
+	assert.Nil(nodegroupErr)
 }
 
 func TestAddNodes(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent:  "",
 		Classes: make(map[string]interface{}, 0),
 		Nodes: []string{
@@ -154,32 +150,31 @@ func TestAddNodes(t *testing.T) {
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"want_nodegroup": want_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"wantNodegroup": wantNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	got_enc := NewENC("json")
-	empty_generic_map := make(map[string]interface{}, 0)
-	got_enc.AddNodegroup("want_nodegroup", "", empty_generic_map, []string{}, empty_generic_map)
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 
-	got_nodegroup, nodegroup_err := got_enc.AddNodes("want_nodegroup", []string{"node-0001", "node-0002"})
+	gotNodegroup, nodegroupErr := gotEnc.AddNodes("wantNodegroup", []string{"node-0001", "node-0002"})
 
 	// We aren't testing the trie package
-	want_enc.Nodes = got_enc.Nodes
+	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Equal(want_enc, *got_enc)
-	assert.Equal(want_nodegroup, *got_nodegroup)
-	assert.Nil(nodegroup_err)
+	assert.Equal(wantEnc, *gotEnc)
+	assert.Equal(wantNodegroup, *gotNodegroup)
+	assert.Nil(nodegroupErr)
 }
 
 func TestGetParentChain(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent:      "",
 		Classes:     make(map[string]interface{}, 0),
 		Nodes:       []string{},
@@ -187,54 +182,53 @@ func TestGetParentChain(t *testing.T) {
 		Environment: "",
 	}
 
-	sub_nodegroup := ENCNodegroup{
-		Parent:      "want_nodegroup",
+	subNodegroup := Nodegroup{
+		Parent:      "wantNodegroup",
 		Classes:     make(map[string]interface{}, 0),
 		Nodes:       []string{},
 		Parameters:  make(map[string]interface{}, 0),
 		Environment: "",
 	}
 
-	sub_sub_nodegroup := ENCNodegroup{
-		Parent:      "sub_nodegroup",
+	subSubNodegroup := Nodegroup{
+		Parent:      "subNodegroup",
 		Classes:     make(map[string]interface{}, 0),
 		Nodes:       []string{},
 		Parameters:  make(map[string]interface{}, 0),
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"want_nodegroup":    want_nodegroup,
-			"sub_nodegroup":     sub_nodegroup,
-			"sub_sub_nodegroup": sub_sub_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"wantNodegroup":   wantNodegroup,
+			"subNodegroup":    subNodegroup,
+			"subSubNodegroup": subSubNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	want_chain := []string{"sub_sub_nodegroup", "sub_nodegroup", "want_nodegroup"}
+	wantChain := []string{"subSubNodegroup", "subNodegroup", "wantNodegroup"}
 
-	got_enc := NewENC("json")
-	empty_generic_map := make(map[string]interface{}, 0)
-	got_enc.AddNodegroup("want_nodegroup", "", empty_generic_map, []string{}, empty_generic_map)
-	got_enc.AddNodegroup("sub_nodegroup", "want_nodegroup", empty_generic_map, []string{}, empty_generic_map)
-	got_enc.AddNodegroup("sub_sub_nodegroup", "sub_nodegroup", empty_generic_map, []string{}, empty_generic_map)
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddNodegroup("subNodegroup", "wantNodegroup", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddNodegroup("subSubNodegroup", "subNodegroup", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 
-	got_chain := got_enc.getParentChain("sub_sub_nodegroup")
+	gotChain := gotEnc.getParentChain("subSubNodegroup")
 
 	// We aren't testing the trie package
-	want_enc.Nodes = got_enc.Nodes
+	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Equal(want_enc, *got_enc)
-	assert.Equal(want_chain, got_chain)
+	assert.Equal(wantEnc, *gotEnc)
+	assert.Equal(wantChain, gotChain)
 
 }
 
 func TestGetLongestChain(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent:  "",
 		Classes: make(map[string]interface{}, 0),
 		Nodes: []string{
@@ -244,8 +238,8 @@ func TestGetLongestChain(t *testing.T) {
 		Environment: "",
 	}
 
-	sub_nodegroup := ENCNodegroup{
-		Parent:  "want_nodegroup",
+	subNodegroup := Nodegroup{
+		Parent:  "wantNodegroup",
 		Classes: make(map[string]interface{}, 0),
 		Nodes: []string{
 			"node-0001",
@@ -254,43 +248,42 @@ func TestGetLongestChain(t *testing.T) {
 		Environment: "",
 	}
 
-	sub_sub_nodegroup := ENCNodegroup{
-		Parent:      "sub_nodegroup",
+	subSubNodegroup := Nodegroup{
+		Parent:      "subNodegroup",
 		Classes:     make(map[string]interface{}, 0),
 		Nodes:       []string{},
 		Parameters:  make(map[string]interface{}, 0),
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"want_nodegroup":    want_nodegroup,
-			"sub_nodegroup":     sub_nodegroup,
-			"sub_sub_nodegroup": sub_sub_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"wantNodegroup":   wantNodegroup,
+			"subNodegroup":    subNodegroup,
+			"subSubNodegroup": subSubNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	got_enc := NewENC("json")
-	empty_generic_map := make(map[string]interface{}, 0)
-	got_enc.AddNodegroup("want_nodegroup", "", empty_generic_map, []string{}, empty_generic_map)
-	got_enc.AddNodegroup("sub_nodegroup", "want_nodegroup", empty_generic_map, []string{}, empty_generic_map)
-	got_enc.AddNodegroup("sub_sub_nodegroup", "sub_nodegroup", empty_generic_map, []string{}, empty_generic_map)
-	got_enc.AddNode("want_nodegroup", "node-0001")
-	got_enc.AddNode("sub_nodegroup", "node-0001")
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddNodegroup("subNodegroup", "wantNodegroup", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddNodegroup("subSubNodegroup", "subNodegroup", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddNode("wantNodegroup", "node-0001")
+	gotEnc.AddNode("subNodegroup", "node-0001")
 
 	// We aren't testing the trie package
-	want_enc.Nodes = got_enc.Nodes
+	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Equal("node-0001-sub_nodegroup-want_nodegroup", got_enc.getLongestChain("node-0001"))
-	assert.Equal(want_enc, *got_enc)
+	assert.Equal("node-0001-subNodegroup-wantNodegroup", gotEnc.getLongestChain("node-0001"))
+	assert.Equal(wantEnc, *gotEnc)
 }
 
 func TestRemoveNode(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent:  "",
 		Classes: make(map[string]interface{}, 0),
 		Nodes: []string{
@@ -300,8 +293,8 @@ func TestRemoveNode(t *testing.T) {
 		Environment: "",
 	}
 
-	sub_nodegroup := ENCNodegroup{
-		Parent:  "want_nodegroup",
+	subNodegroup := Nodegroup{
+		Parent:  "wantNodegroup",
 		Classes: make(map[string]interface{}, 0),
 		Nodes: []string{
 			"node-0001",
@@ -310,46 +303,45 @@ func TestRemoveNode(t *testing.T) {
 		Environment: "",
 	}
 
-	sub_sub_nodegroup := ENCNodegroup{
-		Parent:      "sub_nodegroup",
+	subSubNodegroup := Nodegroup{
+		Parent:      "subNodegroup",
 		Classes:     make(map[string]interface{}, 0),
 		Nodes:       []string{},
 		Parameters:  make(map[string]interface{}, 0),
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"want_nodegroup":    want_nodegroup,
-			"sub_nodegroup":     sub_nodegroup,
-			"sub_sub_nodegroup": sub_sub_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"wantNodegroup":   wantNodegroup,
+			"subNodegroup":    subNodegroup,
+			"subSubNodegroup": subSubNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	got_enc := NewENC("json")
-	empty_generic_map := make(map[string]interface{}, 0)
-	got_enc.AddNodegroup("want_nodegroup", "", empty_generic_map, []string{}, empty_generic_map)
-	got_enc.AddNodegroup("sub_nodegroup", "want_nodegroup", empty_generic_map, []string{}, empty_generic_map)
-	got_enc.AddNodegroup("sub_sub_nodegroup", "sub_nodegroup", empty_generic_map, []string{}, empty_generic_map)
-	got_enc.AddNode("want_nodegroup", "node-0001")
-	got_enc.AddNode("sub_nodegroup", "node-0001")
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddNodegroup("subNodegroup", "wantNodegroup", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddNodegroup("subSubNodegroup", "subNodegroup", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddNode("wantNodegroup", "node-0001")
+	gotEnc.AddNode("subNodegroup", "node-0001")
 
-	got_enc.RemoveNode("want_nodegroup", "node-0001")
+	gotEnc.RemoveNode("wantNodegroup", "node-0001")
 
 	// We aren't testing the trie package
-	want_enc.Nodes = got_enc.Nodes
+	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Equal(want_enc, *got_enc)
-	assert.Nil(got_enc.Nodes.Find("node-0001-want_nodegroup"))
-	assert.NotNil(got_enc.Nodes.Find("node-0001-sub_nodegroup-want_nodegroup"))
+	assert.Equal(wantEnc, *gotEnc)
+	assert.Nil(gotEnc.Nodes.Find("node-0001-wantNodegroup"))
+	assert.NotNil(gotEnc.Nodes.Find("node-0001-subNodegroup-wantNodegroup"))
 }
 
 func TestAddParameter(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent:  "",
 		Classes: make(map[string]interface{}, 0),
 		Nodes:   []string{},
@@ -359,28 +351,28 @@ func TestAddParameter(t *testing.T) {
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"want_nodegroup": want_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"wantNodegroup": wantNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	got_enc := NewENC("json")
-	got_enc.AddNodegroup("want_nodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
-	got_enc.AddParameter("want_nodegroup", "test_param", "test_value")
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddParameter("wantNodegroup", "test_param", "test_value")
 
 	// We aren't testing the trie package
-	want_enc.Nodes = got_enc.Nodes
+	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Equal(want_enc, *got_enc)
+	assert.Equal(wantEnc, *gotEnc)
 }
 
 func TestRemoveParameter(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent:      "",
 		Classes:     make(map[string]interface{}, 0),
 		Nodes:       []string{},
@@ -388,29 +380,29 @@ func TestRemoveParameter(t *testing.T) {
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"want_nodegroup": want_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"wantNodegroup": wantNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	got_enc := NewENC("json")
-	got_enc.AddNodegroup("want_nodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
-	got_enc.AddParameter("want_nodegroup", "test_param", "test_value")
-	got_enc.RemoveParameter("want_nodegroup", "test_param")
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddParameter("wantNodegroup", "test_param", "test_value")
+	gotEnc.RemoveParameter("wantNodegroup", "test_param")
 
 	// We aren't testing the trie package
-	want_enc.Nodes = got_enc.Nodes
+	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Equal(want_enc, *got_enc)
+	assert.Equal(wantEnc, *gotEnc)
 }
 
 func TestAddClass(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent: "",
 		Classes: map[string]interface{}{
 			"test_class": map[string]interface{}{},
@@ -420,28 +412,28 @@ func TestAddClass(t *testing.T) {
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"want_nodegroup": want_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"wantNodegroup": wantNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	got_enc := NewENC("json")
-	got_enc.AddNodegroup("want_nodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
-	got_enc.AddClass("want_nodegroup", "test_class")
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddClass("wantNodegroup", "test_class")
 
 	// We aren't testing the trie package
-	want_enc.Nodes = got_enc.Nodes
+	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Equal(want_enc, *got_enc)
+	assert.Equal(wantEnc, *gotEnc)
 }
 
 func TestRemoveClass(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent:      "",
 		Classes:     map[string]interface{}{},
 		Nodes:       []string{},
@@ -449,29 +441,29 @@ func TestRemoveClass(t *testing.T) {
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"want_nodegroup": want_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"wantNodegroup": wantNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	got_enc := NewENC("json")
-	got_enc.AddNodegroup("want_nodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
-	got_enc.AddClass("want_nodegroup", "test_class")
-	got_enc.RemoveClass("want_nodegroup", "test_class")
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddClass("wantNodegroup", "test_class")
+	gotEnc.RemoveClass("wantNodegroup", "test_class")
 
 	// We aren't testing the trie package
-	want_enc.Nodes = got_enc.Nodes
+	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Equal(want_enc, *got_enc)
+	assert.Equal(wantEnc, *gotEnc)
 }
 
 func TestAddClassParameter(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent: "",
 		Classes: map[string]interface{}{
 			"test_class": map[string]interface{}{
@@ -483,29 +475,29 @@ func TestAddClassParameter(t *testing.T) {
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"want_nodegroup": want_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"wantNodegroup": wantNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	got_enc := NewENC("json")
-	got_enc.AddNodegroup("want_nodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
-	got_enc.AddClass("want_nodegroup", "test_class")
-	got_enc.AddClassParameter("want_nodegroup", "test_class", "test_class_param", "test_value")
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddClass("wantNodegroup", "test_class")
+	gotEnc.AddClassParameter("wantNodegroup", "test_class", "test_class_param", "test_value")
 
 	// We aren't testing the trie package
-	want_enc.Nodes = got_enc.Nodes
+	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Equal(want_enc, *got_enc)
+	assert.Equal(wantEnc, *gotEnc)
 }
 
 func TestRemoveClassParameter(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent: "",
 		Classes: map[string]interface{}{
 			"test_class": map[string]interface{}{},
@@ -515,30 +507,30 @@ func TestRemoveClassParameter(t *testing.T) {
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"want_nodegroup": want_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"wantNodegroup": wantNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	got_enc := NewENC("json")
-	got_enc.AddNodegroup("want_nodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
-	got_enc.AddClass("want_nodegroup", "test_class")
-	got_enc.AddClassParameter("want_nodegroup", "test_class", "test_class_param", "test_value")
-	got_enc.RemoveClassParameter("want_nodegroup", "test_class", "test_class_param")
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddClass("wantNodegroup", "test_class")
+	gotEnc.AddClassParameter("wantNodegroup", "test_class", "test_class_param", "test_value")
+	gotEnc.RemoveClassParameter("wantNodegroup", "test_class", "test_class_param")
 
 	// We aren't testing the trie package
-	want_enc.Nodes = got_enc.Nodes
+	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Equal(want_enc, *got_enc)
+	assert.Equal(wantEnc, *gotEnc)
 }
 
 func TestSetParent(t *testing.T) {
 	assert := assert.New(t)
 
-	parent_nodegroup := ENCNodegroup{
+	parentNodegroup := Nodegroup{
 		Parent:      "",
 		Classes:     map[string]interface{}{},
 		Nodes:       []string{},
@@ -546,7 +538,7 @@ func TestSetParent(t *testing.T) {
 		Environment: "",
 	}
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent:      "test_parent",
 		Classes:     map[string]interface{}{},
 		Nodes:       []string{},
@@ -554,32 +546,32 @@ func TestSetParent(t *testing.T) {
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"test_parent":    parent_nodegroup,
-			"want_nodegroup": want_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"test_parent":   parentNodegroup,
+			"wantNodegroup": wantNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	got_enc := NewENC("json")
-	got_enc.AddNodegroup("want_nodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
-	got_enc.AddNodegroup("test_parent", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
-	got_nodegroup, got_err := got_enc.SetParent("want_nodegroup", "test_parent")
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddNodegroup("test_parent", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotNodegroup, gotErr := gotEnc.SetParent("wantNodegroup", "test_parent")
 
 	// We aren't testing the trie package
-	want_enc.Nodes = got_enc.Nodes
+	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Nil(got_err)
-	assert.Equal(want_nodegroup, *got_nodegroup)
-	assert.Equal(want_enc, *got_enc)
+	assert.Nil(gotErr)
+	assert.Equal(wantNodegroup, *gotNodegroup)
+	assert.Equal(wantEnc, *gotEnc)
 }
 
 func TestSetEnvironment(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent:      "",
 		Classes:     map[string]interface{}{},
 		Nodes:       []string{},
@@ -587,30 +579,30 @@ func TestSetEnvironment(t *testing.T) {
 		Environment: "test_env",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"want_nodegroup": want_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"wantNodegroup": wantNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	got_enc := NewENC("json")
-	got_enc.AddNodegroup("want_nodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
-	got_nodegroup, got_err := got_enc.SetEnvironment("want_nodegroup", "test_env")
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotNodegroup, gotErr := gotEnc.SetEnvironment("wantNodegroup", "test_env")
 
 	// We aren't testing the trie package
-	want_enc.Nodes = got_enc.Nodes
+	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Nil(got_err)
-	assert.Equal(want_nodegroup, *got_nodegroup)
-	assert.Equal(want_enc, *got_enc)
+	assert.Nil(gotErr)
+	assert.Equal(wantNodegroup, *gotNodegroup)
+	assert.Equal(wantEnc, *gotEnc)
 }
 
 func TestGetNode(t *testing.T) {
 	assert := assert.New(t)
 
-	want_nodegroup := ENCNodegroup{
+	wantNodegroup := Nodegroup{
 		Parent: "",
 		Classes: map[string]interface{}{
 			"test_class": map[string]interface{}{
@@ -625,8 +617,8 @@ func TestGetNode(t *testing.T) {
 		Environment: "env_one",
 	}
 
-	sub_nodegroup := ENCNodegroup{
-		Parent: "want_nodegroup",
+	subNodegroup := Nodegroup{
+		Parent: "wantNodegroup",
 		Classes: map[string]interface{}{
 			"test_class": map[string]interface{}{
 				"unique_test": "I've never been overriden",
@@ -642,8 +634,8 @@ func TestGetNode(t *testing.T) {
 		Environment: "env_two",
 	}
 
-	sub_sub_nodegroup := ENCNodegroup{
-		Parent: "sub_nodegroup",
+	subSubNodegroup := Nodegroup{
+		Parent: "subNodegroup",
 		Classes: map[string]interface{}{
 			"test_class": map[string]interface{}{
 				"override_me": "I'm legit",
@@ -659,18 +651,18 @@ func TestGetNode(t *testing.T) {
 		Environment: "",
 	}
 
-	want_enc := ENC{
-		Nodegroups: map[string]ENCNodegroup{
-			"want_nodegroup":    want_nodegroup,
-			"sub_nodegroup":     sub_nodegroup,
-			"sub_sub_nodegroup": sub_sub_nodegroup,
+	wantEnc := ENC{
+		Nodegroups: map[string]Nodegroup{
+			"wantNodegroup":   wantNodegroup,
+			"subNodegroup":    subNodegroup,
+			"subSubNodegroup": subSubNodegroup,
 		},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	want_node := ENCNodegroup{
-		Parent: "sub_nodegroup",
+	wantNode := Nodegroup{
+		Parent: "subNodegroup",
 		Classes: map[string]interface{}{
 			"test_class": map[string]interface{}{
 				"override_me": "I'm legit",
@@ -695,39 +687,39 @@ func TestGetNode(t *testing.T) {
 		Environment: "env_two",
 	}
 
-	got_enc := NewENC("json")
-	got_enc.AddNodegroup("want_nodegroup", "", make(map[string]interface{}), []string{}, make(map[string]interface{}))
-	got_enc.AddNodegroup("sub_nodegroup", "want_nodegroup", make(map[string]interface{}), []string{}, make(map[string]interface{}))
-	got_enc.AddNodegroup("sub_sub_nodegroup", "sub_nodegroup", make(map[string]interface{}), []string{}, make(map[string]interface{}))
+	gotEnc := NewENC("json")
+	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}), []string{}, make(map[string]interface{}))
+	gotEnc.AddNodegroup("subNodegroup", "wantNodegroup", make(map[string]interface{}), []string{}, make(map[string]interface{}))
+	gotEnc.AddNodegroup("subSubNodegroup", "subNodegroup", make(map[string]interface{}), []string{}, make(map[string]interface{}))
 
-	got_enc.AddNode("sub_sub_nodegroup", "node-0001")
+	gotEnc.AddNode("subSubNodegroup", "node-0001")
 
-	got_enc.SetEnvironment("want_nodegroup", "env_one")
-	got_enc.SetEnvironment("sub_nodegroup", "env_two")
+	gotEnc.SetEnvironment("wantNodegroup", "env_one")
+	gotEnc.SetEnvironment("subNodegroup", "env_two")
 
-	got_enc.AddClass("want_nodegroup", "test_class")
-	got_enc.AddClass("want_nodegroup", "third_class")
-	got_enc.AddClass("sub_nodegroup", "test_class")
-	got_enc.AddClass("sub_nodegroup", "second_class")
-	got_enc.AddClass("sub_sub_nodegroup", "test_class")
-	got_enc.AddClass("sub_sub_nodegroup", "fourth_class")
+	gotEnc.AddClass("wantNodegroup", "test_class")
+	gotEnc.AddClass("wantNodegroup", "third_class")
+	gotEnc.AddClass("subNodegroup", "test_class")
+	gotEnc.AddClass("subNodegroup", "second_class")
+	gotEnc.AddClass("subSubNodegroup", "test_class")
+	gotEnc.AddClass("subSubNodegroup", "fourth_class")
 
-	got_enc.AddParameter("sub_nodegroup", "test_param", "test_value")
+	gotEnc.AddParameter("subNodegroup", "test_param", "test_value")
 
-	got_enc.AddClassParameter("want_nodegroup", "test_class", "override_me", "I should not be here")
-	got_enc.AddClassParameter("want_nodegroup", "third_class", "unique_test", "I've never been overriden")
+	gotEnc.AddClassParameter("wantNodegroup", "test_class", "override_me", "I should not be here")
+	gotEnc.AddClassParameter("wantNodegroup", "third_class", "unique_test", "I've never been overriden")
 
-	got_enc.AddClassParameter("sub_nodegroup", "test_class", "unique_test", "I've never been overriden")
-	got_enc.AddClassParameter("sub_nodegroup", "second_class", "unique_test", "I've never been overriden")
+	gotEnc.AddClassParameter("subNodegroup", "test_class", "unique_test", "I've never been overriden")
+	gotEnc.AddClassParameter("subNodegroup", "second_class", "unique_test", "I've never been overriden")
 
-	got_enc.AddClassParameter("sub_sub_nodegroup", "test_class", "override_me", "I'm legit")
-	got_enc.AddClassParameter("sub_sub_nodegroup", "fourth_class", "unique_test", "I've never been overriden")
+	gotEnc.AddClassParameter("subSubNodegroup", "test_class", "override_me", "I'm legit")
+	gotEnc.AddClassParameter("subSubNodegroup", "fourth_class", "unique_test", "I've never been overriden")
 
-	got_node, got_err := got_enc.GetNode("node-0001")
+	gotNode, gotErr := gotEnc.GetNode("node-0001")
 
 	// We aren't testing the trie package
-	want_enc.Nodes = got_enc.Nodes
+	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Nil(got_err)
-	assert.Equal(want_node, *got_node)
+	assert.Nil(gotErr)
+	assert.Equal(wantNode, *gotNode)
 }
