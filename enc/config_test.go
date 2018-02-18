@@ -196,8 +196,8 @@ func testNewJSONConfig(t *testing.T) {
     ConfigType: "json",
   }
 
-  gotJsonConfig := NewConfig(jsonFile)
-  assert.Equal(wantEnc, *gotJsonConfig.ENCs["enc_test-json_data.json"])
+  gotJSONConfig := NewConfig(jsonFile)
+  assert.Equal(wantEnc, *gotJSONConfig.ENCs["enc_test-json_data.json"])
 }
 
 func testNewYAMLConfig(t *testing.T) {
@@ -260,6 +260,6 @@ func testNewYAMLConfig(t *testing.T) {
     ConfigType: "yaml",
   }
 
-  gotYamlConfig := NewConfig(yamlFile)
-  assert.Equal(wantEnc, *gotYamlConfig.ENCs["enc_test-yaml_data.yaml"])
+  gotYAMLConfig := NewConfig(yamlFile)
+  assert.Equal(wantEnc, *gotYAMLConfig.ENCs["enc_test-yaml_data.yaml"])
 }

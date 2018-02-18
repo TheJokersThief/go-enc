@@ -22,7 +22,7 @@ func removeByValueSS(a []string, val string) []string {
 	return newArray
 }
 
-func err_check(err error) {
+func errCheck(err error) {
 	if err != nil {
 		panic(err)
 	}

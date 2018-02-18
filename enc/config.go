@@ -10,17 +10,19 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// Config stores the configuration for our ENC
 type Config struct {
 	ENCs        map[string]*ENC
 	GlobPattern string
 }
 
+// NewConfig generates a new ENC from the config. One ENC for each file matched by the glob pattern
 func NewConfig(globPatttern string) *Config {
 	matchingFiles, err := filepath.Glob(globPatttern)
-	err_check(err)
+	errCheck(err)
 
 	if matchingFiles == nil {
-		panic(errors.New("No files matched that glob pattern."))
+		panic(errors.New("No files matched that glob pattern"))
 	}
 
 	c := &Config{
@@ -49,35 +51,35 @@ func NewConfig(globPatttern string) *Config {
 }
 
 func (c *Config) processJSONFile(filepath string, enc *ENC) {
-	data, file_err := ioutil.ReadFile(filepath)
-	err_check(file_err)
+	data, fileErr := ioutil.ReadFile(filepath)
+	errCheck(fileErr)
 
-	var raw_enc map[string]interface{}
-	json_parse_err := json.Unmarshal(data, &raw_enc)
-	err_check(json_parse_err)
+	var rawEnc map[string]interface{}
+	jsonParseErr := json.Unmarshal(data, &rawEnc)
+	errCheck(jsonParseErr)
 
-	c.processRawENC(raw_enc, enc)
+	c.processRawENC(rawEnc, enc)
 }
 
 func (c *Config) processYAMLFile(filepath string, enc *ENC) {
-	data, file_err := ioutil.ReadFile(filepath)
-	err_check(file_err)
+	data, fileErr := ioutil.ReadFile(filepath)
+	errCheck(fileErr)
 
-	var raw_enc map[string]interface{}
-	yaml_parse_err := yaml.Unmarshal(data, &raw_enc)
-	err_check(yaml_parse_err)
+	var rawEnc map[string]interface{}
+	yamlParseErr := yaml.Unmarshal(data, &rawEnc)
+	errCheck(yamlParseErr)
 
 	// YAML unmarshalling returns type map[interface{}]interface{} regardless of provided type
 	// so until that's fixed, some conversion has to take place
-	for k, v := range raw_enc {
-		raw_enc[k] = stringifyYAMLMapKeys(v)
+	for k, v := range rawEnc {
+		rawEnc[k] = stringifyYAMLMapKeys(v)
 	}
 
-	c.processRawENC(raw_enc, enc)
+	c.processRawENC(rawEnc, enc)
 }
 
-func (c *Config) processRawENC(raw_enc map[string]interface{}, enc *ENC) {
-	for nodegroup, attributes := range raw_enc {
+func (c *Config) processRawENC(rawEnc map[string]interface{}, enc *ENC) {
+	for nodegroup, attributes := range rawEnc {
 		attrs := attributes.(map[string]interface{})
 
 		var (
