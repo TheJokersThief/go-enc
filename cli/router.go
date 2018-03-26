@@ -114,3 +114,59 @@ func nodeCommand(working_enc *enc.ENC) {
 func nodesCommand(working_enc *enc.ENC) {
 	working_enc.AddNodes(*nodesNodegroup, *nodesNodes)
 }
+
+func paramCommand(working_enc *enc.ENC) {
+	switch *paramAction {
+	case "add":
+	case "set":
+	case "remove":
+	default:
+		handleErr(fmt.Errorf("Invalid action for command: [command: %s ; action: %s]", param.FullCommand(), *paramAction))
+	}
+
+	param
+	paramAction
+	paramNodegroup
+	paramName
+	paramValue
+}
+
+func classCommand(working_enc *enc.ENC) {
+	switch *classAction {
+	case "add":
+	case "remove":
+	default:
+		handleErr(fmt.Errorf("Invalid action for command: [command: %s ; action: %s]", class.FullCommand(), *classAction))
+	}
+
+	class
+	classAction
+	classNodegroup
+}
+
+func classParamCommand(working_enc *enc.ENC) {
+	switch *classParamAction {
+	case "add":
+	case "set":
+	case "remove":
+	default:
+		handleErr(fmt.Errorf("Invalid action for command: [command: %s ; action: %s]", classParam.FullCommand(), *classParamAction))
+	}
+
+	classParam
+	classParamAction
+	classParamNodegroup
+	classParamClass
+	classParamName
+	classParamValue
+}
+
+func parentCommand(working_enc *enc.ENC) {
+	parent
+	parentVal
+}
+
+func environmentCommand(working_enc *enc.ENC) {
+	environment
+	environmentVal
+}
