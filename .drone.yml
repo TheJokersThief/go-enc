@@ -1,0 +1,68 @@
+workspace:
+  base: /drone
+  path: src/github.com/thejokersthief/go-enc
+
+pipeline:
+  run_tests:
+    image: golang:${GO_VERSION}
+    commands:
+      - go get
+      - go test
+    when:
+      event: push
+
+  make_package:
+    image: golang:${GO_VERSION}
+    environment:
+      ARTIFACTS: /drone/artifacts
+    commands:
+      - chmod +x src/github.com/thejokersthief/go-enc/.ci/build_arch.bash
+      - src/github.com/thejokersthief/go-enc/.ci/build_arch.bash
+    when:
+      event: tag
+
+  upload_package:
+    group: release
+    image: plugins/s3
+    environment:
+      ARTIFACTS: /drone/artifacts
+    bucket: go_enc
+    strip_prefix: ${ARTIFACTS}/
+    source: ${ARTIFACTS}/*
+    target: $$TAG/
+    path_style: true
+    acl: public-read
+    secrets:
+      - source: ci_obj_location
+        target: endpoint
+      - source: ci_obj_access_key
+        target: access_key
+      - source: ci_obj_secret_key
+        target: secret_key
+    when:
+      event: tag
+      matrix:
+        GO_VERSION: latest
+
+  github_release:
+    group: release
+    image: plugins/github-release
+    environment:
+      ARTIFACTS: /drone/artifacts
+    secrets:
+      - source: git_token
+        target: github_token
+    files: ${ARTIFACTS}/*
+    when:
+      event: tag
+      matrix:
+        GO_VERSION: latest
+
+matrix:
+  GO_VERSION:
+    - latest
+    - "1.11"
+    - "1.10"
+    - "1.9"
+    - "1.8"
+    - "1.7"
