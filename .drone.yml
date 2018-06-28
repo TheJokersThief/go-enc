@@ -8,8 +8,8 @@ pipeline:
     commands:
       - mkdir -p /go/bin  # Manually ensure the bin directory exists
       - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh  # Install dep
-      - dep ensure
-      - go test
+      - /go/bin/dep ensure
+      - go test -v enc/*    # Verbose tests
     when:
       event: push
 
