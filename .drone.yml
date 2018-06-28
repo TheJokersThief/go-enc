@@ -18,7 +18,7 @@ pipeline:
       ARTIFACTS: /go/artifacts
     commands:
       - chmod +x .ci/build_arch.bash
-      - .ci/build_arch.bash .
+      - .ci/build_arch.bash /go/src/github.com/thejokersthief/go-enc
     when:
       event: tag
       matrix:
