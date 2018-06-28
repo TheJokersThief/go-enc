@@ -11,7 +11,7 @@ pipeline:
       - /go/bin/dep ensure
       - go test -v enc/*    # Verbose tests
     when:
-      event: push
+      event: [push, tag]
 
   make_package:
     image: golang:${GO_VERSION}
@@ -22,6 +22,8 @@ pipeline:
       - .ci/build_arch.bash .
     when:
       event: tag
+      matrix:
+        GO_VERSION: latest
 
   upload_package:
     group: release
