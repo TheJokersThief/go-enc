@@ -19,6 +19,9 @@ pipeline:
     commands:
       - chmod +x .ci/build_arch.bash
       - /bin/bash .ci/build_arch.bash github.com/thejokersthief/go-enc
+      - rm -rf ${ARTIFACTS}/.*  # Remove any dotfiles
+      - echo "TEST"
+      - echo ${ARTIFACTS}
     when:
       event: tag
       matrix:
