@@ -6,7 +6,8 @@ pipeline:
   run_tests:
     image: golang:${GO_VERSION}
     commands:
-      - go get ./...
+      - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh  # Install dep
+      - dep ensure
       - go test
     when:
       event: push
