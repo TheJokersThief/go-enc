@@ -12,7 +12,6 @@ pipeline:
       - go test -v enc/*    # Verbose tests
     when:
       event: [push, tag]
-
   make_package:
     image: golang:${GO_VERSION}
     environment:
@@ -24,7 +23,6 @@ pipeline:
       event: tag
       matrix:
         GO_VERSION: latest
-
   upload_package:
     group: release
     image: plugins/s3
@@ -47,7 +45,6 @@ pipeline:
       event: tag
       matrix:
         GO_VERSION: latest
-
   github_release:
     group: release
     image: plugins/github-release
