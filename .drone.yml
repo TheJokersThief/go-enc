@@ -1,5 +1,5 @@
 workspace:
-  base: /drone
+  base: /go
   path: src/github.com/thejokersthief/go-enc
 
 pipeline:
@@ -15,7 +15,7 @@ pipeline:
   make_package:
     image: golang:${GO_VERSION}
     environment:
-      ARTIFACTS: /drone/artifacts
+      ARTIFACTS: /go/artifacts
     commands:
       - chmod +x .ci/build_arch.bash
       - .ci/build_arch.bash .
@@ -26,7 +26,7 @@ pipeline:
     group: release
     image: plugins/s3
     environment:
-      ARTIFACTS: /drone/artifacts
+      ARTIFACTS: /go/artifacts
     bucket: go_enc
     strip_prefix: ${ARTIFACTS}/
     source: ${ARTIFACTS}/*
@@ -49,7 +49,7 @@ pipeline:
     group: release
     image: plugins/github-release
     environment:
-      ARTIFACTS: /drone/artifacts
+      ARTIFACTS: /go/artifacts
     secrets:
       - source: git_token
         target: github_token
