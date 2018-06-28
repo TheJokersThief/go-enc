@@ -29,9 +29,9 @@ pipeline:
     environment:
       ARTIFACTS: /go/artifacts
     secrets: [ ci_obj_location, ci_obj_access_key, ci_obj_secret_key ]
-    access_key: ${ci_obj_access_key}
-    secret_key: ${ci_obj_secret_key}
-    endpoint: ${ci_obj_location}
+    access_key: ${CI_OBJ_ACCESS_KEY}
+    secret_key: ${CI_OBJ_SECRET_KEY}
+    endpoint: ${CI_OBJ_LOCATION}
     bucket: go_enc
     strip_prefix: ${ARTIFACTS}/
     source: ${ARTIFACTS}/*
