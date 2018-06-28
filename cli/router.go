@@ -41,6 +41,7 @@ var (
 	class          = app.Command("class", "Actions for classes")
 	classAction    = class.Arg("action", "add|remove").Required().String()
 	classNodegroup = class.Arg("nodegroup", "Nodegoup name").Required().String()
+	className      = class.Arg("classname", "Class name").Required().String()
 
 	classParam          = app.Command("class_param", "Actions for parameters")
 	classParamAction    = classParam.Arg("action", "add|set|remove").Required().String()
@@ -49,11 +50,13 @@ var (
 	classParamName      = classParam.Arg("param_name", "Parameter name").Required().String()
 	classParamValue     = classParam.Arg("param_value", "Parameter value").Required().String()
 
-	parent    = app.Command("parent", "Set the parent value")
-	parentVal = parent.Arg("new_parent", "The new parent value (can be \"\" for none)").Required().String()
+	parent          = app.Command("parent", "Set the parent value")
+	parentNodegroup = classParam.Arg("nodegroup", "Nodegoup name").Required().String()
+	parentVal       = parent.Arg("new_parent", "The new parent value (can be \"\" for none)").Required().String()
 
-	environment    = app.Command("environment", "Set the environment value")
-	environmentVal = environment.Arg("new_environment", "The new environment value (can be \"\" for none)").Required().String()
+	environment          = app.Command("environment", "Set the environment value")
+	environmentNodegroup = classParam.Arg("nodegroup", "Nodegoup name").Required().String()
+	environmentVal       = environment.Arg("new_environment", "The new environment value (can be \"\" for none)").Required().String()
 )
 
 func NewCLI() {
@@ -118,55 +121,44 @@ func nodesCommand(working_enc *enc.ENC) {
 func paramCommand(working_enc *enc.ENC) {
 	switch *paramAction {
 	case "add":
+		working_enc.AddParameter(*paramNodegroup, *paramName, *paramValue)
 	case "set":
+		working_enc.SetParameter(*paramNodegroup, *paramName, *paramValue)
 	case "remove":
+		working_enc.RemoveParameter(*paramNodegroup, *paramName)
 	default:
 		handleErr(fmt.Errorf("Invalid action for command: [command: %s ; action: %s]", param.FullCommand(), *paramAction))
 	}
-
-	param
-	paramAction
-	paramNodegroup
-	paramName
-	paramValue
 }
 
 func classCommand(working_enc *enc.ENC) {
 	switch *classAction {
 	case "add":
+		working_enc.AddClass(*classNodegroup, *className)
 	case "remove":
+		working_enc.AddClass(*classNodegroup, *className)
 	default:
 		handleErr(fmt.Errorf("Invalid action for command: [command: %s ; action: %s]", class.FullCommand(), *classAction))
 	}
-
-	class
-	classAction
-	classNodegroup
 }
 
 func classParamCommand(working_enc *enc.ENC) {
 	switch *classParamAction {
 	case "add":
+		working_enc.AddClassParameter(*classParamNodegroup, *classParamClass, *classParamName, *classParamValue)
 	case "set":
+		working_enc.SetClassParameter(*classParamNodegroup, *classParamClass, *classParamName, *classParamValue)
 	case "remove":
+		working_enc.RemoveClassParameter(*classParamNodegroup, *classParamClass, *classParamName)
 	default:
 		handleErr(fmt.Errorf("Invalid action for command: [command: %s ; action: %s]", classParam.FullCommand(), *classParamAction))
 	}
-
-	classParam
-	classParamAction
-	classParamNodegroup
-	classParamClass
-	classParamName
-	classParamValue
 }
 
 func parentCommand(working_enc *enc.ENC) {
-	parent
-	parentVal
+	working_enc.SetParent(*parentNodegroup, *parentVal)
 }
 
 func environmentCommand(working_enc *enc.ENC) {
-	environment
-	environmentVal
+	working_enc.SetEnvironment(*environmentNodegroup, *environmentVal)
 }
