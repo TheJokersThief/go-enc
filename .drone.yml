@@ -21,8 +21,6 @@ pipeline:
       - .ci/build_arch.bash .
     when:
       event: tag
-      matrix:
-        GO_VERSION: latest
   upload_package:
     group: release
     image: plugins/s3
