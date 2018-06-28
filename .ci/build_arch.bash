@@ -6,6 +6,7 @@ if [[ -z "$package" ]]; then
   echo "usage: $0 <package-name>"
   exit 1
 fi
+
 package_split=(${package//\// })
 package_name=${package_split[-1]}
 
