@@ -28,19 +28,16 @@ pipeline:
     image: plugins/s3
     environment:
       ARTIFACTS: /go/artifacts
+    secrets: [ ci_obj_location, ci_obj_access_key, ci_obj_secret_key ]
+    access_key: $ci_obj_access_key
+    secret_key: $ci_obj_secret_key
+    endpoint: $ci_obj_location
     bucket: go_enc
     strip_prefix: ${ARTIFACTS}/
     source: ${ARTIFACTS}/*
     target: $TAG/
     path_style: true
     acl: public-read
-    secrets:
-      - source: ci_obj_location
-        target: endpoint
-      - source: ci_obj_access_key
-        target: access_key
-      - source: ci_obj_secret_key
-        target: secret_key
     when:
       event: tag
       matrix:
