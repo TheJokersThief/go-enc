@@ -6,8 +6,8 @@ pipeline:
   run_tests:
     image: golang:${GO_VERSION}
     commands:
-      - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh  # Install dep
       - mkdir -p /go/bin  # Manually ensure the bin directory exists
+      - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh  # Install dep
       - dep ensure
       - go test
     when:
