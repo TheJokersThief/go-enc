@@ -19,52 +19,50 @@ pipeline:
     commands:
       - chmod +x .ci/build_arch.bash
       - /bin/bash .ci/build_arch.bash github.com/thejokersthief/go-enc
-      - echo "TEST"
-      - echo $ARTIFACTS
     when:
       event: tag
       matrix:
         GO_VERSION: latest
-  # upload_package:
-  #   group: release
-  #   image: plugins/s3
-  #   environment:
-  #     ARTIFACTS: /go/artifacts
-  #   secrets:
-  #     - source: ci_obj_location
-  #       target: PLUGIN_ENDPOINT
-  #     - source: ci_obj_access_key
-  #       target: AWS_ACCESS_KEY_ID
-  #     - source: ci_obj_secret_key
-  #       target: AWS_SECRET_ACCESS_KEY
-  #   bucket: go_enc
-  #   strip_prefix: $ARTIFACTS/
-  #   source: $ARTIFACTS/*
-  #   target: ${TAG}/
-  #   path_style: true
-  #   acl: public-read
-  #   when:
-  #     event: tag
-  #     matrix:
-  #       GO_VERSION: latest
-  # github_release:
-  #   group: release
-  #   image: plugins/github-release
-  #   environment:
-  #     ARTIFACTS: /go/artifacts
-  #   secrets:
-  #     - source: git_token
-  #       target: github_token
-  #   files: $ARTIFACTS/*
-  #   when:
-  #     event: tag
-  #     matrix:
-  #       GO_VERSION: latest
+  upload_package:
+    group: release
+    image: plugins/s3
+    environment:
+      ARTIFACTS: /go/artifacts
+    secrets:
+      - source: ci_obj_location
+        target: PLUGIN_ENDPOINT
+      - source: ci_obj_access_key
+        target: AWS_ACCESS_KEY_ID
+      - source: ci_obj_secret_key
+        target: AWS_SECRET_ACCESS_KEY
+    bucket: go_enc
+    strip_prefix: $ARTIFACTS/
+    source: $ARTIFACTS/*
+    target: ${TAG}/
+    path_style: true
+    acl: public-read
+    when:
+      event: tag
+      matrix:
+        GO_VERSION: latest
+  github_release:
+    group: release
+    image: plugins/github-release
+    environment:
+      ARTIFACTS: /go/artifacts
+    secrets:
+      - source: git_token
+        target: github_token
+    files: $ARTIFACTS/*
+    when:
+      event: tag
+      matrix:
+        GO_VERSION: latest
 
 matrix:
   GO_VERSION:
     - latest
-    # - "1.10"
-    # - "1.9"
-    # - "1.8"
-    # - "1.7"
+    - "1.10"
+    - "1.9"
+    - "1.8"
+    - "1.7"
