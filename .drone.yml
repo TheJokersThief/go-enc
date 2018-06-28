@@ -28,10 +28,13 @@ pipeline:
     image: plugins/s3
     environment:
       ARTIFACTS: /go/artifacts
-    secrets: [ ci_obj_location, ci_obj_access_key, ci_obj_secret_key ]
-    access_key: ${CI_OBJ_ACCESS_KEY}
-    secret_key: ${CI_OBJ_SECRET_KEY}
-    endpoint: ${CI_OBJ_LOCATION}
+    secrets:
+      - source: ci_obj_location
+        target: PLUGIN_ENDPOINT
+      - source: ci_obj_access_key
+        target: AWS_ACCESS_KEY_ID
+      - source: ci_obj_secret_key
+        target: AWS_SECRET_ACCESS_KEY
     bucket: go_enc
     strip_prefix: ${ARTIFACTS}/
     source: ${ARTIFACTS}/*
