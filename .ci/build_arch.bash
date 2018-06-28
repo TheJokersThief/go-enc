@@ -8,7 +8,7 @@ if [[ -z "$package" ]]; then
 fi
 
 package_split=(${package//\// })
-package_name=${package_split[-1]}
+package_name=${package##*/}
 
 platforms=("windows/amd64" "windows/386" "darwin/386" "darwin/amd64" "linux/386" "linux/amd64")
 
