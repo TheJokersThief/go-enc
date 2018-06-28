@@ -6,7 +6,7 @@ pipeline:
   run_tests:
     image: golang:${GO_VERSION}
     commands:
-      - go get
+      - go get ./...
       - go test
     when:
       event: push
@@ -16,8 +16,8 @@ pipeline:
     environment:
       ARTIFACTS: /drone/artifacts
     commands:
-      - chmod +x src/github.com/thejokersthief/go-enc/.ci/build_arch.bash
-      - src/github.com/thejokersthief/go-enc/.ci/build_arch.bash
+      - chmod +x .ci/build_arch.bash
+      - .ci/build_arch.bash .
     when:
       event: tag
 
