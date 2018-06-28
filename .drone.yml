@@ -31,7 +31,7 @@ pipeline:
     bucket: go_enc
     strip_prefix: ${ARTIFACTS}/
     source: ${ARTIFACTS}/*
-    target: $$TAG/
+    target: $TAG/
     path_style: true
     acl: public-read
     secrets:
