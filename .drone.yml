@@ -15,7 +15,7 @@ pipeline:
   make_package:
     image: golang:${GO_VERSION}
     environment:
-      ARTIFACTS: /go/artifacts
+      ARTIFACTS: /drone/artifacts
     commands:
       - chmod +x .ci/build_arch.bash
       - /bin/bash .ci/build_arch.bash github.com/thejokersthief/go-enc
@@ -27,7 +27,7 @@ pipeline:
     group: release
     image: plugins/s3
     environment:
-      ARTIFACTS: /go/artifacts
+      ARTIFACTS: /drone/artifacts
     secrets:
       - source: ci_obj_location
         target: PLUGIN_ENDPOINT
@@ -49,7 +49,7 @@ pipeline:
     group: release
     image: plugins/github-release
     environment:
-      ARTIFACTS: /go/artifacts
+      ARTIFACTS: /drone/artifacts
     secrets:
       - source: git_token
         target: github_token
