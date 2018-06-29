@@ -7,8 +7,7 @@ ENCs are used to track configuration across your infrastructure in a single unif
 * Merged classes and parameters based on parents
 * Grouped nodes by nodegroups
 * Choice of config format: JSON or YAML
-* (WIP) ~~Command-Line Interface~~
-* (WIP) ~~REST-API webservice~~
+* Command-Line Interface
 
 ## Development
 Go-ENC uses [dep](https://github.com/golang/dep) to manage dependencies.
