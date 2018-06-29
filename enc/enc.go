@@ -10,11 +10,11 @@ import (
 
 // Nodegroup represents groups of nodes and meta information about them
 type Nodegroup struct {
-	Parent      string                 `json:"parent" yaml:"parent"`
-	Classes     map[string]interface{} `json:"classes" yaml:"classes"`
-	Nodes       []string               `json:"nodes" yaml:"nodes"`
-	Parameters  map[string]interface{} `json:"parameters" yaml:"parameters"`
-	Environment string                 `json:"environment" yaml:"environment"`
+	Parent      string                 `json:"parent,omitempty" yaml:"parent,omitempty"`
+	Classes     map[string]interface{} `json:"classes,omitempty" yaml:"classes,omitempty"`
+	Nodes       []string               `json:"nodes,omitempty" yaml:"nodes,omitempty"`
+	Parameters  map[string]interface{} `json:"parameters,omitempty" yaml:"parameters,omitempty"`
+	Environment string                 `json:"environment,omitempty" yaml:"environment,omitempty"`
 }
 
 // ENC represents the entire structure of the External Node Classifier

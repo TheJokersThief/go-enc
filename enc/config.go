@@ -124,8 +124,11 @@ func (c *Config) processRawENC(rawEnc map[string]interface{}, enc *ENC) {
 			classes = make(map[string]interface{}, 0)
 		}
 
-		if nodes, ok = attrs["nodes"].([]string); !ok {
-			nodes = make([]string, 0)
+		nodes = make([]string, 0)
+		if attrs["nodes"] != nil {
+			for _, node := range attrs["nodes"].([]interface{}) {
+				nodes = append(nodes, node.(string))
+			}
 		}
 
 		if parameters, ok = attrs["parameters"].(map[string]interface{}); !ok {
