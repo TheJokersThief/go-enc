@@ -51,26 +51,26 @@ var (
 	classParamValue     = classParam.Arg("param_value", "Parameter value").Required().String()
 
 	parent          = app.Command("parent", "Set the parent value")
-	parentNodegroup = classParam.Arg("nodegroup", "Nodegoup name").Required().String()
+	parentNodegroup = parent.Arg("nodegroup", "Nodegoup name").Required().String()
 	parentVal       = parent.Arg("new_parent", "The new parent value (can be \"\" for none)").Required().String()
 
 	environment          = app.Command("environment", "Set the environment value")
-	environmentNodegroup = classParam.Arg("nodegroup", "Nodegoup name").Required().String()
+	environmentNodegroup = environment.Arg("nodegroup", "Nodegoup name").Required().String()
 	environmentVal       = environment.Arg("new_environment", "The new environment value (can be \"\" for none)").Required().String()
 
 	commandErr error
 )
 
 func NewCLI() {
-	kingpin.CommandLine.HelpFlag.Short('h')
+	arguments := kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	config := enc.NewConfig(*enc_glob)
 	working_enc, ok := config.ENCs[*enc_name]
 	if !ok {
-		handleErr(fmt.Errorf("Chosen ENC doesn't exist: %s", enc_name))
+		handleErr(fmt.Errorf("Chosen ENC doesn't exist: %s", *enc_name))
 	}
 
-	switch kingpin.MustParse(app.Parse(os.Args[1:])) {
+	switch arguments {
 	case nodegroup.FullCommand():
 		nodegroupCommand(working_enc)
 	case node.FullCommand():
@@ -90,6 +90,8 @@ func NewCLI() {
 	}
 
 	handleErr(commandErr)
+
+	config.WriteOutENC()
 }
 
 func nodegroupCommand(working_enc *enc.ENC) {

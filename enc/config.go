@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -32,22 +33,47 @@ func NewConfig(globPatttern string) *Config {
 
 	for _, file := range matchingFiles {
 		var enc *ENC
-		switch extension := strings.ToLower(filepath.Ext(file)); extension {
+		extension := strings.ToLower(filepath.Ext(file))
+		switch extension {
 		case ".json":
-			enc = NewENC("json")
+			enc = NewENC("json", file)
 			c.processJSONFile(file, enc)
 		case ".yaml", ".yml":
-			enc = NewENC("yaml")
+			enc = NewENC("yaml", file)
 			c.processYAMLFile(file, enc)
 		default:
 			panic(errors.New("Unrecognised file extension, expecting: json|yaml"))
 		}
 
 		filename := filepath.Base(file)
+		// Strip extension from filename
+		filename = filename[0 : len(filename)-len(extension)]
 		c.ENCs[filename] = enc
 	}
 
 	return c
+}
+
+func (c *Config) WriteOutENC() {
+	for _, current_enc := range c.ENCs {
+		file, fileErr := os.Create(current_enc.FileName)
+		defer file.Close()
+		errCheck(fileErr)
+
+		var encContents []byte
+		var marshalErr error
+
+		switch extension := strings.ToLower(filepath.Ext(current_enc.FileName)); extension {
+		case ".json":
+			encContents, marshalErr = json.Marshal(current_enc.Nodegroups)
+		case ".yaml", ".yml":
+			encContents, marshalErr = yaml.Marshal(current_enc.Nodegroups)
+		}
+		errCheck(marshalErr)
+
+		file.Write(encContents)
+		file.Sync()
+	}
 }
 
 func (c *Config) processJSONFile(filepath string, enc *ENC) {
@@ -98,8 +124,11 @@ func (c *Config) processRawENC(rawEnc map[string]interface{}, enc *ENC) {
 			classes = make(map[string]interface{}, 0)
 		}
 
-		if nodes, ok = attrs["nodes"].([]string); !ok {
-			nodes = make([]string, 0)
+		nodes = make([]string, 0)
+		if attrs["nodes"] != nil {
+			for _, node := range attrs["nodes"].([]interface{}) {
+				nodes = append(nodes, node.(string))
+			}
 		}
 
 		if parameters, ok = attrs["parameters"].(map[string]interface{}); !ok {
