@@ -15,7 +15,7 @@ pipeline:
   make_package:
     image: golang:${GO_VERSION}
     environment:
-      ARTIFACTS: /drone/artifacts
+      ARTIFACTS: /go/artifacts
     commands:
       - chmod +x .ci/build_arch.bash
       - /bin/bash .ci/build_arch.bash github.com/thejokersthief/go-enc
@@ -26,8 +26,6 @@ pipeline:
   upload_package:
     group: release
     image: plugins/s3
-    environment:
-      ARTIFACTS: /drone/artifacts
     secrets:
       - source: ci_obj_location
         target: PLUGIN_ENDPOINT
@@ -36,8 +34,8 @@ pipeline:
       - source: ci_obj_secret_key
         target: AWS_SECRET_ACCESS_KEY
     bucket: go_enc
-    strip_prefix: $ARTIFACTS/
-    source: $ARTIFACTS/*
+    strip_prefix: /go/artifacts/
+    source: /go/artifacts/*
     target: ${TAG}/
     path_style: true
     acl: public-read
@@ -48,12 +46,10 @@ pipeline:
   github_release:
     group: release
     image: plugins/github-release
-    environment:
-      ARTIFACTS: /drone/artifacts
     secrets:
       - source: git_token
         target: github_token
-    files: $ARTIFACTS/*
+    files: /go/artifacts/*
     when:
       event: tag
       matrix:
