@@ -51,42 +51,44 @@ var (
 	classParamValue     = classParam.Arg("param_value", "Parameter value").Required().String()
 
 	parent          = app.Command("parent", "Set the parent value")
-	parentNodegroup = classParam.Arg("nodegroup", "Nodegoup name").Required().String()
+	parentNodegroup = parent.Arg("nodegroup", "Nodegoup name").Required().String()
 	parentVal       = parent.Arg("new_parent", "The new parent value (can be \"\" for none)").Required().String()
 
 	environment          = app.Command("environment", "Set the environment value")
-	environmentNodegroup = classParam.Arg("nodegroup", "Nodegoup name").Required().String()
+	environmentNodegroup = environment.Arg("nodegroup", "Nodegoup name").Required().String()
 	environmentVal       = environment.Arg("new_environment", "The new environment value (can be \"\" for none)").Required().String()
 
 	commandErr error
 )
 
 func NewCLI() {
-	kingpin.CommandLine.HelpFlag.Short('h')
+	arguments := kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	config := enc.NewConfig(*enc_glob)
-	working_enc, ok := config.ENCs[*enc_name]
+	_, ok := config.ENCs[*enc_name]
+	fmt.Printf("%#v", config.ENCs)
+
 	if !ok {
-		handleErr(fmt.Errorf("Chosen ENC doesn't exist: %s", enc_name))
+		handleErr(fmt.Errorf("Chosen ENC doesn't exist: %s", *enc_name))
 	}
 
-	switch kingpin.MustParse(app.Parse(os.Args[1:])) {
-	case nodegroup.FullCommand():
-		nodegroupCommand(working_enc)
-	case node.FullCommand():
-		nodeCommand(working_enc)
-	case nodes.FullCommand():
-		nodesCommand(working_enc)
-	case param.FullCommand():
-		paramCommand(working_enc)
-	case class.FullCommand():
-		classCommand(working_enc)
-	case classParam.FullCommand():
-		classParamCommand(working_enc)
-	case parent.FullCommand():
-		parentCommand(working_enc)
-	case environment.FullCommand():
-		environmentCommand(working_enc)
+	switch arguments {
+	// case nodegroup.FullCommand():
+	// 	nodegroupCommand(working_enc)
+	// case node.FullCommand():
+	// 	nodeCommand(working_enc)
+	// case nodes.FullCommand():
+	// 	nodesCommand(working_enc)
+	// case param.FullCommand():
+	// 	paramCommand(working_enc)
+	// case class.FullCommand():
+	// 	classCommand(working_enc)
+	// case classParam.FullCommand():
+	// 	classParamCommand(working_enc)
+	// case parent.FullCommand():
+	// 	parentCommand(working_enc)
+	// case environment.FullCommand():
+	// 	environmentCommand(working_enc)
 	}
 
 	handleErr(commandErr)
@@ -105,64 +107,64 @@ func nodegroupCommand(working_enc *enc.ENC) {
 	}
 }
 
-func nodeCommand(working_enc *enc.ENC) {
-	switch *nodeAction {
-	case "add":
-		_, commandErr = working_enc.AddNode(*nodeNodegroup, *nodeNode)
-	case "get":
-		_, commandErr = working_enc.GetNode(*nodeNode)
-	case "remove":
-		_, commandErr = working_enc.RemoveNode(*nodeNodegroup, *nodeNode)
-	default:
-		handleErr(fmt.Errorf("Invalid action for command: [command: %s ; action: %s]", node.FullCommand(), *nodeAction))
-	}
-}
+// func nodeCommand(working_enc *enc.ENC) {
+// 	switch *nodeAction {
+// 	case "add":
+// 		_, commandErr = working_enc.AddNode(*nodeNodegroup, *nodeNode)
+// 	case "get":
+// 		_, commandErr = working_enc.GetNode(*nodeNode)
+// 	case "remove":
+// 		_, commandErr = working_enc.RemoveNode(*nodeNodegroup, *nodeNode)
+// 	default:
+// 		handleErr(fmt.Errorf("Invalid action for command: [command: %s ; action: %s]", node.FullCommand(), *nodeAction))
+// 	}
+// }
 
-func nodesCommand(working_enc *enc.ENC) {
-	_, commandErr = working_enc.AddNodes(*nodesNodegroup, *nodesNodes)
-}
+// func nodesCommand(working_enc *enc.ENC) {
+// 	_, commandErr = working_enc.AddNodes(*nodesNodegroup, *nodesNodes)
+// }
 
-func paramCommand(working_enc *enc.ENC) {
-	switch *paramAction {
-	case "add":
-		_, commandErr = working_enc.AddParameter(*paramNodegroup, *paramName, *paramValue)
-	case "set":
-		_, commandErr = working_enc.SetParameter(*paramNodegroup, *paramName, *paramValue)
-	case "remove":
-		_, commandErr = working_enc.RemoveParameter(*paramNodegroup, *paramName)
-	default:
-		handleErr(fmt.Errorf("Invalid action for command: [command: %s ; action: %s]", param.FullCommand(), *paramAction))
-	}
-}
+// func paramCommand(working_enc *enc.ENC) {
+// 	switch *paramAction {
+// 	case "add":
+// 		_, commandErr = working_enc.AddParameter(*paramNodegroup, *paramName, *paramValue)
+// 	case "set":
+// 		_, commandErr = working_enc.SetParameter(*paramNodegroup, *paramName, *paramValue)
+// 	case "remove":
+// 		_, commandErr = working_enc.RemoveParameter(*paramNodegroup, *paramName)
+// 	default:
+// 		handleErr(fmt.Errorf("Invalid action for command: [command: %s ; action: %s]", param.FullCommand(), *paramAction))
+// 	}
+// }
 
-func classCommand(working_enc *enc.ENC) {
-	switch *classAction {
-	case "add":
-		_, commandErr = working_enc.AddClass(*classNodegroup, *className)
-	case "remove":
-		_, commandErr = working_enc.AddClass(*classNodegroup, *className)
-	default:
-		handleErr(fmt.Errorf("Invalid action for command: [command: %s ; action: %s]", class.FullCommand(), *classAction))
-	}
-}
+// func classCommand(working_enc *enc.ENC) {
+// 	switch *classAction {
+// 	case "add":
+// 		_, commandErr = working_enc.AddClass(*classNodegroup, *className)
+// 	case "remove":
+// 		_, commandErr = working_enc.AddClass(*classNodegroup, *className)
+// 	default:
+// 		handleErr(fmt.Errorf("Invalid action for command: [command: %s ; action: %s]", class.FullCommand(), *classAction))
+// 	}
+// }
 
-func classParamCommand(working_enc *enc.ENC) {
-	switch *classParamAction {
-	case "add":
-		_, commandErr = working_enc.AddClassParameter(*classParamNodegroup, *classParamClass, *classParamName, *classParamValue)
-	case "set":
-		_, commandErr = working_enc.SetClassParameter(*classParamNodegroup, *classParamClass, *classParamName, *classParamValue)
-	case "remove":
-		_, commandErr = working_enc.RemoveClassParameter(*classParamNodegroup, *classParamClass, *classParamName)
-	default:
-		handleErr(fmt.Errorf("Invalid action for command: [command: %s ; action: %s]", classParam.FullCommand(), *classParamAction))
-	}
-}
+// func classParamCommand(working_enc *enc.ENC) {
+// 	switch *classParamAction {
+// 	case "add":
+// 		_, commandErr = working_enc.AddClassParameter(*classParamNodegroup, *classParamClass, *classParamName, *classParamValue)
+// 	case "set":
+// 		_, commandErr = working_enc.SetClassParameter(*classParamNodegroup, *classParamClass, *classParamName, *classParamValue)
+// 	case "remove":
+// 		_, commandErr = working_enc.RemoveClassParameter(*classParamNodegroup, *classParamClass, *classParamName)
+// 	default:
+// 		handleErr(fmt.Errorf("Invalid action for command: [command: %s ; action: %s]", classParam.FullCommand(), *classParamAction))
+// 	}
+// }
 
-func parentCommand(working_enc *enc.ENC) {
-	_, commandErr = working_enc.SetParent(*parentNodegroup, *parentVal)
-}
+// func parentCommand(working_enc *enc.ENC) {
+// 	_, commandErr = working_enc.SetParent(*parentNodegroup, *parentVal)
+// }
 
-func environmentCommand(working_enc *enc.ENC) {
-	_, commandErr = working_enc.SetEnvironment(*environmentNodegroup, *environmentVal)
-}
+// func environmentCommand(working_enc *enc.ENC) {
+// 	_, commandErr = working_enc.SetEnvironment(*environmentNodegroup, *environmentVal)
+// }

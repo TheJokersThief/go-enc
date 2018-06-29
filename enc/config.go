@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"fmt"
+
 	"gopkg.in/yaml.v2"
 )
 
@@ -18,6 +20,7 @@ type Config struct {
 
 // NewConfig generates a new ENC from the config. One ENC for each file matched by the glob pattern
 func NewConfig(globPatttern string) *Config {
+	fmt.Printf("%#v", globPatttern)
 	matchingFiles, err := filepath.Glob(globPatttern)
 	errCheck(err)
 
