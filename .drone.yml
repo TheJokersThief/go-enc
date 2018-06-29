@@ -11,7 +11,7 @@ pipeline:
       - /go/bin/dep ensure
       - go test -v enc/*    # Verbose tests
     when:
-      event: [push, tag]
+      event: [push, tag, pull_request]
   make_package:
     image: golang:${GO_VERSION}
     environment:
