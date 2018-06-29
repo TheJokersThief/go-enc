@@ -1,0 +1,44 @@
+workspace:
+  base: /go
+  path: src/github.com/thejokersthief/go-enc
+
+pipeline:
+  run_tests:
+    image: golang:${GO_VERSION}
+    commands:
+      - mkdir -p /go/bin  # Manually ensure the bin directory exists
+      - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh  # Install dep
+      - /go/bin/dep ensure
+      - go test -v enc/*    # Verbose tests
+    when:
+      event: [push, tag, pull_request]
+  make_package:
+    image: golang:${GO_VERSION}
+    environment:
+      ARTIFACTS: /go/artifacts
+    commands:
+      - chmod +x .ci/build_arch.bash
+      - /bin/bash .ci/build_arch.bash github.com/thejokersthief/go-enc
+    when:
+      event: tag
+      matrix:
+        GO_VERSION: latest
+  github_release:
+    group: release
+    image: plugins/github-release
+    secrets:
+      - source: git_token
+        target: github_token
+    files: /go/artifacts/*
+    when:
+      event: tag
+      matrix:
+        GO_VERSION: latest
+
+matrix:
+  GO_VERSION:
+    - latest
+    - "1.10"
+    - "1.9"
+    - "1.8"
+    - "1.7"

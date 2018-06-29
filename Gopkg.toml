@@ -33,7 +33,7 @@
   name = "github.com/gorilla/mux"
   version = "1.6.1"
 
-[[constraint]]
+[[override]]
   name = "github.com/alecthomas/kingpin"
   version = "2.2.6"
 
@@ -41,7 +41,7 @@
   branch = "master"
   name = "github.com/derekparker/trie"
 
-[[constraint]]
+[[override]]
   branch = "master"
   name = "github.com/jinzhu/copier"
 

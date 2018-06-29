@@ -58,7 +58,7 @@ var (
 	environmentNodegroup = classParam.Arg("nodegroup", "Nodegoup name").Required().String()
 	environmentVal       = environment.Arg("new_environment", "The new environment value (can be \"\" for none)").Required().String()
 
-	commandcommandErr = nil
+	commandErr error
 )
 
 func NewCLI() {
