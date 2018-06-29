@@ -35,7 +35,8 @@ func NewConfig(globPatttern string) *Config {
 
 	for _, file := range matchingFiles {
 		var enc *ENC
-		switch extension := strings.ToLower(filepath.Ext(file)); extension {
+		extension := strings.ToLower(filepath.Ext(file))
+		switch extension {
 		case ".json":
 			enc = NewENC("json")
 			c.processJSONFile(file, enc)
@@ -47,6 +48,7 @@ func NewConfig(globPatttern string) *Config {
 		}
 
 		filename := filepath.Base(file)
+		filename = filename[0 : len(filename)-len(extension)]
 		c.ENCs[filename] = enc
 	}
 
