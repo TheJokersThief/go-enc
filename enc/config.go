@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -51,6 +52,28 @@ func NewConfig(globPatttern string) *Config {
 	}
 
 	return c
+}
+
+func (c *Config) WriteOutENC() {
+	for _, current_enc := range c.ENCs {
+		file, fileErr := os.Create(current_enc.FileName)
+		defer file.Close()
+		errCheck(fileErr)
+
+		var encContents []byte
+		var marshalErr error
+
+		switch extension := strings.ToLower(filepath.Ext(current_enc.FileName)); extension {
+		case ".json":
+			encContents, marshalErr = json.Marshal(current_enc.Nodegroups)
+		case ".yaml", ".yml":
+			encContents, marshalErr = yaml.Marshal(current_enc.Nodegroups)
+		}
+		errCheck(marshalErr)
+
+		file.Write(encContents)
+		file.Sync()
+	}
 }
 
 func (c *Config) processJSONFile(filepath string, enc *ENC) {
