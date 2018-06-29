@@ -2,10 +2,18 @@
 #!/usr/bin/env bash
 
 package=$1
+artifacts_path=$2
 if [[ -z "$package" ]]; then
-  echo "usage: $0 <package-name>"
+  echo "usage: $0 <package-name> <artifact_path>"
   exit 1
 fi
+
+echo "TEST1"
+echo $ARTIFACTS
+echo "TEST2"
+echo ${ARTIFACTS}
+echo "TEST3"
+echo $artifacts_path
 
 package_split=(${package//\// })
 package_name=${package##*/}
