@@ -23,26 +23,6 @@ pipeline:
       event: tag
       matrix:
         GO_VERSION: latest
-  upload_package:
-    group: release
-    image: plugins/s3
-    secrets:
-      - source: ci_obj_location
-        target: PLUGIN_ENDPOINT
-      - source: ci_obj_access_key
-        target: AWS_ACCESS_KEY_ID
-      - source: ci_obj_secret_key
-        target: AWS_SECRET_ACCESS_KEY
-    bucket: go_enc
-    strip_prefix: /go/artifacts/
-    source: /go/artifacts/*
-    target: ${TAG}/
-    path_style: true
-    acl: public-read
-    when:
-      event: tag
-      matrix:
-        GO_VERSION: latest
   github_release:
     group: release
     image: plugins/github-release
