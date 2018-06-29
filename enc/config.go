@@ -7,8 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"fmt"
-
 	"gopkg.in/yaml.v2"
 )
 
@@ -20,7 +18,6 @@ type Config struct {
 
 // NewConfig generates a new ENC from the config. One ENC for each file matched by the glob pattern
 func NewConfig(globPatttern string) *Config {
-	fmt.Printf("%#v", globPatttern)
 	matchingFiles, err := filepath.Glob(globPatttern)
 	errCheck(err)
 
@@ -38,16 +35,17 @@ func NewConfig(globPatttern string) *Config {
 		extension := strings.ToLower(filepath.Ext(file))
 		switch extension {
 		case ".json":
-			enc = NewENC("json")
+			enc = NewENC("json", file)
 			c.processJSONFile(file, enc)
 		case ".yaml", ".yml":
-			enc = NewENC("yaml")
+			enc = NewENC("yaml", file)
 			c.processYAMLFile(file, enc)
 		default:
 			panic(errors.New("Unrecognised file extension, expecting: json|yaml"))
 		}
 
 		filename := filepath.Base(file)
+		// Strip extension from filename
 		filename = filename[0 : len(filename)-len(extension)]
 		c.ENCs[filename] = enc
 	}

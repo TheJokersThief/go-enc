@@ -22,14 +22,16 @@ type ENC struct {
 	Nodegroups map[string]Nodegroup
 	Nodes      *trie.Trie
 	ConfigType string
+	FileName   string
 }
 
 // NewENC initialises a new ENC
-func NewENC(configType string) *ENC {
+func NewENC(configType string, fileName string) *ENC {
 	return &ENC{
 		Nodegroups: map[string]Nodegroup{},
 		Nodes:      trie.New(),
 		ConfigType: configType,
+		FileName:   fileName,
 	}
 }
 
