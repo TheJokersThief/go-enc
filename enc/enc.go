@@ -87,9 +87,7 @@ func (enc *ENC) AddNode(nodegroup string, nodeName string) (*Nodegroup, error) {
 		return &Nodegroup{}, errors.New("Nodegroup does not exist")
 	}
 	parentChain := nodeName + "-" + strings.Join(enc.getParentChain(nodegroup), "-")
-	if len(parentChain) > len(enc.getLongestChain(nodeName)) {
-		enc.Nodes.Add(parentChain, parentChain)
-	}
+	enc.Nodes.Add(parentChain, parentChain)
 
 	nodegroupObj, _ := enc.GetNodegroup(nodegroup)
 	nodegroupObj.Nodes = append(nodegroupObj.Nodes, nodeName)
