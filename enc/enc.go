@@ -25,6 +25,7 @@ type ENC struct {
 	Nodes      *trie.Trie
 	ConfigType string
 	FileName   string
+	ConfigLink *Config
 }
 
 // NewENC initialises a new ENC
@@ -76,7 +77,7 @@ func (enc *ENC) RemoveNodegroup(name string) (*Nodegroup, error) {
 
 // GetNodegroup retrieves a nodegroup by name
 func (enc *ENC) GetNodegroup(nodegroupName string) (*Nodegroup, error) {
-	config := GetGlobalConfig()
+	config := enc.ConfigLink
 
 	var (
 		nodegroup         string
@@ -149,13 +150,12 @@ func (enc *ENC) getParentChain(nodegroupName string) []string {
 	errCheck(err)
 
 	// If nodegroup doesn't have an explicit cluster, it's the current cluster
-	if !strings.Contains(nodegroupName, "@") {
+	if !strings.Contains(nodegroupName, "@") && enc.Name != "" {
 		nodegroupName = nodegroupName + "@" + enc.Name
 	}
 
 	parents := []string{nodegroupName}
 	parent := nodegroup.Parent
-	// fmt.Printf("%#v :: %#v\n", nodegroupName, nodegroup.Parent)
 	for parent != "" {
 		parents = append(parents, parent)
 		parentNG, _ := enc.GetNodegroup(parent)
@@ -184,12 +184,20 @@ func (enc *ENC) RemoveNode(nodegroup string, nodeName string) (*Nodegroup, error
 		return &Nodegroup{}, errors.New("Nodegroup does not exist")
 	}
 
-	chains := enc.Nodes.PrefixSearch(nodeName)
-	for _, chain := range chains {
+	// If nodegroup doesn't have an explicit cluster, it's the current cluster
+	if !strings.Contains(nodegroup, "@") && enc.Name != "" {
+		nodegroup = nodegroup + "@" + enc.Name
+	}
 
-		if strings.HasPrefix(chain, nodeName+"-"+nodegroup) {
-			enc.Nodes.Remove(chain)
-			break
+	children := enc.Nodes.FuzzySearch(nodegroup + "-")
+	if len(children) == 0 {
+		chains := enc.Nodes.PrefixSearch(nodeName)
+		for _, chain := range chains {
+
+			if strings.HasSuffix(chain, nodegroup) {
+				enc.Nodes.Remove(chain)
+				break
+			}
 		}
 	}
 

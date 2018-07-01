@@ -11,18 +11,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var (
-	globalConfig *Config
-)
-
 // Config stores the configuration for our ENC
 type Config struct {
 	ENCs        map[string]*ENC
 	GlobPattern string
-}
-
-func GetGlobalConfig() *Config {
-	return globalConfig
 }
 
 // NewConfig generates a new ENC from the config. One ENC for each file matched by the glob pattern
@@ -63,11 +55,9 @@ func NewConfig(globPatttern string) *Config {
 		filename = filename[0 : len(filename)-len(extension)]
 		encNodeTracker[filename] = nodegroupNodes
 		enc.Name = filename
+		enc.ConfigLink = c
 		c.ENCs[filename] = enc
 	}
-
-	// Record global config for inter-cluster nodegroup-grabbing
-	globalConfig = c
 
 	// Adding all nodes here so they can properly track inter-cluster parents
 	for encName, nodegroupNodes := range encNodeTracker {
