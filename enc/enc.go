@@ -2,6 +2,7 @@ package enc
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 
@@ -109,7 +110,11 @@ func (enc *ENC) AddNode(nodegroup string, nodeName string) (*Nodegroup, error) {
 	if _, ok := enc.Nodegroups[nodegroup]; !ok {
 		return &Nodegroup{}, errors.New("Nodegroup does not exist")
 	}
-	parentChain := nodeName + "-" + strings.Join(enc.getParentChain(nodegroup), "-")
+	parentChain := nodeName + "-" + strings.Join(reverse(enc.getParentChain(nodegroup)), "-")
+
+	if _, ok := enc.Nodes.Find(nodeName); !ok {
+		enc.Nodes.Add(nodeName, nodeName)
+	}
 	enc.Nodes.Add(parentChain, parentChain)
 
 	nodegroupObj, _ := enc.GetNodegroup(nodegroup)
@@ -192,6 +197,34 @@ func (enc *ENC) GetNode(nodeName string) (*Nodegroup, error) {
 	}
 
 	return masterNodegroup, nil
+}
+
+func (enc *ENC) GetChains(nodeName string) ([]string, error) {
+	root, ok := enc.Nodes.Find(nodeName)
+	if !ok {
+		return []string{}, fmt.Errorf("Could not find node in ENC")
+	}
+
+	return enc.travelChain(root.Parent(), nodeName), nil
+}
+
+func (enc *ENC) travelChain(root *trie.Node, currentChain string) []string {
+	var emptyChain []string
+	for letter, node := range root.Children() {
+		newChain := currentChain
+		if string(letter) != "\x00" {
+			newChain = newChain + string(letter)
+		}
+
+		if len(node.Children()) > 0 {
+			childChains := enc.travelChain(node, newChain)
+			emptyChain = append(emptyChain, childChains...)
+		} else {
+			emptyChain = append(emptyChain, newChain)
+		}
+	}
+
+	return emptyChain
 }
 
 // mergeNodegroups merges two nodegroups, preserving values exclusive to ngA and overwriting with
