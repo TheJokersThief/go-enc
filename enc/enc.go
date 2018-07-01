@@ -213,6 +213,7 @@ func (enc *ENC) GetNode(nodeName string) (*Nodegroup, error) {
 	return masterNodegroup, nil
 }
 
+// Get all possible parents for a node from the trie
 func (enc *ENC) GetChains(nodeName string) ([]string, error) {
 	root, ok := enc.Nodes.Find(nodeName)
 	if !ok {
