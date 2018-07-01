@@ -115,13 +115,14 @@ func (c *Config) processYAMLFile(filepath string, enc *ENC) {
 }
 
 func (c *Config) processRawENC(rawEnc map[string]interface{}, enc *ENC) {
+	nodegroupNodes := make(map[string][]string, 0)
+
 	for nodegroup, attributes := range rawEnc {
 		attrs := attributes.(map[string]interface{})
 
 		var (
 			parent     string
 			classes    map[string]interface{}
-			nodes      []string
 			parameters map[string]interface{}
 			ok         bool
 		)
@@ -134,13 +135,6 @@ func (c *Config) processRawENC(rawEnc map[string]interface{}, enc *ENC) {
 			classes = make(map[string]interface{}, 0)
 		}
 
-		nodes = make([]string, 0)
-		if attrs["nodes"] != nil {
-			for _, node := range attrs["nodes"].([]interface{}) {
-				nodes = append(nodes, node.(string))
-			}
-		}
-
 		if parameters, ok = attrs["parameters"].(map[string]interface{}); !ok {
 			parameters = make(map[string]interface{}, 0)
 		}
@@ -149,7 +143,18 @@ func (c *Config) processRawENC(rawEnc map[string]interface{}, enc *ENC) {
 			nodegroup,
 			parent,
 			classes,
-			nodes,
+			make([]string, 0),
 			parameters)
+
+		nodegroupNodes[nodegroup] = make([]string, 0)
+		if attrs["nodes"] != nil {
+			for _, node := range attrs["nodes"].([]interface{}) {
+				nodegroupNodes[nodegroup] = append(nodegroupNodes[nodegroup], node.(string))
+			}
+		}
+	}
+
+	for nodegroup, nodes := range nodegroupNodes {
+		enc.AddNodes(nodegroup, nodes)
 	}
 }
