@@ -69,16 +69,39 @@ func (enc *ENC) RemoveNodegroup(name string) (*Nodegroup, error) {
 		return &nodegroup, nil
 	}
 
-	return &Nodegroup{}, errors.New("Nodegroup does not exist")
+	return &Nodegroup{}, fmt.Errorf("Nodegroup does not exist: %s", name)
 }
 
 // GetNodegroup retrieves a nodegroup by name
 func (enc *ENC) GetNodegroup(nodegroupName string) (*Nodegroup, error) {
-	if val, ok := enc.Nodegroups[nodegroupName]; ok {
+	config := GetGlobalConfig()
+
+	var (
+		nodegroup         string
+		cluster           string
+		clusterNodegroups map[string]Nodegroup
+	)
+
+	if config != nil {
+		if strings.Contains(nodegroupName, "@") {
+			nodegroupSplit := strings.Split(nodegroupName, "@")
+			nodegroup, cluster = nodegroupSplit[0], nodegroupSplit[1]
+			fmt.Println("No config")
+		} else {
+			nodegroup, cluster = nodegroupName, "production"
+			fmt.Println("Config")
+		}
+
+		clusterNodegroups = config.ENCs[cluster].Nodegroups
+	} else {
+		clusterNodegroups, nodegroup = enc.Nodegroups, nodegroupName
+	}
+
+	if val, ok := clusterNodegroups[nodegroup]; ok {
 		return &val, nil
 	}
 
-	return &Nodegroup{}, errors.New("Nodegroup does not exist")
+	return &Nodegroup{}, fmt.Errorf("Nodegroup does not exist: %s", nodegroupName)
 }
 
 // AddNode adds a single node to a nodegroup
