@@ -39,16 +39,21 @@ func NewConfig(globPatttern string) *Config {
 		GlobPattern: globPatttern,
 	}
 
+	encNodeTracker := make(map[string]map[string][]string, 0)
 	for _, file := range matchingFiles {
-		var enc *ENC
+		var (
+			enc            *ENC
+			nodegroupNodes map[string][]string
+		)
+
 		extension := strings.ToLower(filepath.Ext(file))
 		switch extension {
 		case ".json":
 			enc = NewENC("json", file)
-			c.processJSONFile(file, enc)
+			nodegroupNodes = c.processJSONFile(file, enc)
 		case ".yaml", ".yml":
 			enc = NewENC("yaml", file)
-			c.processYAMLFile(file, enc)
+			nodegroupNodes = c.processYAMLFile(file, enc)
 		default:
 			panic(errors.New("Unrecognised file extension, expecting: json|yaml"))
 		}
@@ -56,10 +61,21 @@ func NewConfig(globPatttern string) *Config {
 		filename := filepath.Base(file)
 		// Strip extension from filename
 		filename = filename[0 : len(filename)-len(extension)]
+		encNodeTracker[filename] = nodegroupNodes
+		enc.Name = filename
 		c.ENCs[filename] = enc
 	}
 
+	// Record global config for inter-cluster nodegroup-grabbing
 	globalConfig = c
+
+	// Adding all nodes here so they can properly track inter-cluster parents
+	for encName, nodegroupNodes := range encNodeTracker {
+		working_enc := c.ENCs[encName]
+		for nodegroup, nodes := range nodegroupNodes {
+			working_enc.AddNodes(nodegroup, nodes)
+		}
+	}
 
 	return c
 }
@@ -86,7 +102,7 @@ func (c *Config) WriteOutENC() {
 	}
 }
 
-func (c *Config) processJSONFile(filepath string, enc *ENC) {
+func (c *Config) processJSONFile(filepath string, enc *ENC) map[string][]string {
 	data, fileErr := ioutil.ReadFile(filepath)
 	errCheck(fileErr)
 
@@ -94,10 +110,10 @@ func (c *Config) processJSONFile(filepath string, enc *ENC) {
 	jsonParseErr := json.Unmarshal(data, &rawEnc)
 	errCheck(jsonParseErr)
 
-	c.processRawENC(rawEnc, enc)
+	return c.processRawENC(rawEnc, enc)
 }
 
-func (c *Config) processYAMLFile(filepath string, enc *ENC) {
+func (c *Config) processYAMLFile(filepath string, enc *ENC) map[string][]string {
 	data, fileErr := ioutil.ReadFile(filepath)
 	errCheck(fileErr)
 
@@ -111,10 +127,11 @@ func (c *Config) processYAMLFile(filepath string, enc *ENC) {
 		rawEnc[k] = stringifyYAMLMapKeys(v)
 	}
 
-	c.processRawENC(rawEnc, enc)
+	return c.processRawENC(rawEnc, enc)
 }
 
-func (c *Config) processRawENC(rawEnc map[string]interface{}, enc *ENC) {
+// Returns a map of nodegroups to nodes to be added later after the config is generated
+func (c *Config) processRawENC(rawEnc map[string]interface{}, enc *ENC) map[string][]string {
 	nodegroupNodes := make(map[string][]string, 0)
 
 	for nodegroup, attributes := range rawEnc {
@@ -154,7 +171,5 @@ func (c *Config) processRawENC(rawEnc map[string]interface{}, enc *ENC) {
 		}
 	}
 
-	for nodegroup, nodes := range nodegroupNodes {
-		enc.AddNodes(nodegroup, nodes)
-	}
+	return nodegroupNodes
 }

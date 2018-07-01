@@ -20,6 +20,7 @@ type Nodegroup struct {
 
 // ENC represents the entire structure of the External Node Classifier
 type ENC struct {
+	Name       string
 	Nodegroups map[string]Nodegroup
 	Nodes      *trie.Trie
 	ConfigType string
@@ -87,13 +88,16 @@ func (enc *ENC) GetNodegroup(nodegroupName string) (*Nodegroup, error) {
 		if strings.Contains(nodegroupName, "@") {
 			nodegroupSplit := strings.Split(nodegroupName, "@")
 			nodegroup, cluster = nodegroupSplit[0], nodegroupSplit[1]
-			fmt.Println("No config")
 		} else {
-			nodegroup, cluster = nodegroupName, "production"
-			fmt.Println("Config")
+			nodegroup, cluster = nodegroupName, enc.Name
 		}
 
 		clusterNodegroups = config.ENCs[cluster].Nodegroups
+
+		keys := make([]string, 0)
+		for key, _ := range clusterNodegroups {
+			keys = append(keys, key)
+		}
 	} else {
 		clusterNodegroups, nodegroup = enc.Nodegroups, nodegroupName
 	}
@@ -135,13 +139,23 @@ func (enc *ENC) AddNodes(nodegroup string, nodes []string) (*Nodegroup, error) {
 	return enc.GetNodegroup(nodegroup)
 }
 
+func (enc *ENC) ParentChainWrapper(nodegroupName string) []string {
+	return enc.getParentChain(nodegroupName)
+}
+
 // getParentChain generates a path of parents until it reaches the top
 func (enc *ENC) getParentChain(nodegroupName string) []string {
 	nodegroup, err := enc.GetNodegroup(nodegroupName)
 	errCheck(err)
 
+	// If nodegroup doesn't have an explicit cluster, it's the current cluster
+	if !strings.Contains(nodegroupName, "@") {
+		nodegroupName = nodegroupName + "@" + enc.Name
+	}
+
 	parents := []string{nodegroupName}
 	parent := nodegroup.Parent
+	// fmt.Printf("%#v :: %#v\n", nodegroupName, nodegroup.Parent)
 	for parent != "" {
 		parents = append(parents, parent)
 		parentNG, _ := enc.GetNodegroup(parent)
