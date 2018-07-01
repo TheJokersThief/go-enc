@@ -314,7 +314,7 @@ func TestGetLongestChain(t *testing.T) {
 	// We aren't testing the trie package
 	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Equal("node-0001-wantNodegroup@enc_test-json_data-subNodegroup@enc_test-json_data", gotEnc.getLongestChain("node-0001"))
+	assert.Equal("node-0001$$wantNodegroup@enc_test-json_data$$subNodegroup@enc_test-json_data", gotEnc.getLongestChain("node-0001"))
 	assert.Equal(wantEnc, *gotEnc)
 }
 
@@ -374,11 +374,11 @@ func TestRemoveNode(t *testing.T) {
 	// Because of the nature of a trie, we only want the key to disappear if
 	// it has no children. wantNodegroup has one child so should remain
 	gotEnc.RemoveNode("wantNodegroup", "node-0001")
-	assert.NotNil(gotEnc.Nodes.Find("node-0001-wantNodegroup@enc_test-json_data"))
+	assert.NotNil(gotEnc.Nodes.Find("node-0001$$wantNodegroup@enc_test-json_data"))
 
 	// subNodegroup on the other hand has no children so will be removed
 	gotEnc.RemoveNode("subNodegroup", "node-0001")
-	assert.Nil(gotEnc.Nodes.Find("node-0001-wantNodegroup@enc_test-json_data-subNodegroup@enc_test-json_data"))
+	assert.Nil(gotEnc.Nodes.Find("node-0001$$wantNodegroup@enc_test-json_data$$subNodegroup@enc_test-json_data"))
 
 	// We aren't testing the trie package
 	wantEnc.Nodes = gotEnc.Nodes
@@ -697,7 +697,7 @@ func TestGetNode(t *testing.T) {
 	}
 
 	subNodegroup := Nodegroup{
-		Parent: "wantNodegroup",
+		Parent: "wantNodegroup@enc_test-json_data",
 		Classes: map[string]interface{}{
 			"test_class": map[string]interface{}{
 				"unique_test": "I've never been overriden",
@@ -714,7 +714,7 @@ func TestGetNode(t *testing.T) {
 	}
 
 	subSubNodegroup := Nodegroup{
-		Parent: "subNodegroup",
+		Parent: "subNodegroup@enc_test-json_data",
 		Classes: map[string]interface{}{
 			"test_class": map[string]interface{}{
 				"override_me": "I'm legit",
@@ -744,7 +744,7 @@ func TestGetNode(t *testing.T) {
 	}
 
 	wantNode := Nodegroup{
-		Parent: "subNodegroup",
+		Parent: "",
 		Classes: map[string]interface{}{
 			"test_class": map[string]interface{}{
 				"override_me": "I'm legit",
@@ -760,9 +760,7 @@ func TestGetNode(t *testing.T) {
 				"unique_test": "I've never been overriden",
 			},
 		},
-		Nodes: []string{
-			"node-0001",
-		},
+		Nodes: nil,
 		Parameters: map[string]interface{}{
 			"test_param": "test_value",
 		},
@@ -772,8 +770,8 @@ func TestGetNode(t *testing.T) {
 	gotEnc := conf.ENCs["enc_test-json_data"]
 	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}), []string{}, make(map[string]interface{}))
-	gotEnc.AddNodegroup("subNodegroup", "wantNodegroup", make(map[string]interface{}), []string{}, make(map[string]interface{}))
-	gotEnc.AddNodegroup("subSubNodegroup", "subNodegroup", make(map[string]interface{}), []string{}, make(map[string]interface{}))
+	gotEnc.AddNodegroup("subNodegroup", "wantNodegroup@enc_test-json_data", make(map[string]interface{}), []string{}, make(map[string]interface{}))
+	gotEnc.AddNodegroup("subSubNodegroup", "subNodegroup@enc_test-json_data", make(map[string]interface{}), []string{}, make(map[string]interface{}))
 
 	gotEnc.AddNode("subSubNodegroup", "node-0001")
 
