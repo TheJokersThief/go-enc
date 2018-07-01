@@ -7,17 +7,25 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	conf *Config
+)
+
+func init() {
+	conf = NewConfig("/tmp/enc_test-json_data.json")
+}
+
 func TestNewENC(t *testing.T) {
 	assert := assert.New(t)
 	nodesTrie := trie.New()
 	want := ENC{
-		FileName:   "/tmp/test.json",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{},
 		Nodes:      nodesTrie,
 		ConfigType: "json",
 	}
 
-	got := NewENC("json", "/tmp/test.json")
+	got := NewENC("json", "/tmp/enc_test-json_data.json")
 	assert.Equal(want, *got)
 }
 
@@ -33,7 +41,9 @@ func TestAddNodegroup(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"wantNodegroup": wantNodegroup,
 		},
@@ -41,7 +51,8 @@ func TestAddNodegroup(t *testing.T) {
 		ConfigType: "json",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
 	gotNodegroup, nodegroupErr := gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 
 	assert.Equal(wantEnc, *gotEnc)
@@ -61,13 +72,16 @@ func TestRemoveNodegroup(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName:   "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{},
 		Nodes:      trie.New(),
 		ConfigType: "json",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 	gotNodegroup, nodegroupErr := gotEnc.RemoveNodegroup("wantNodegroup")
 
@@ -88,7 +102,9 @@ func TestGetNodegroup(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"wantNodegroup": wantNodegroup,
 		},
@@ -96,7 +112,8 @@ func TestGetNodegroup(t *testing.T) {
 		ConfigType: "json",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 
 	gotNodegroup, nodegroupErr := gotEnc.GetNodegroup("wantNodegroup")
@@ -120,7 +137,9 @@ func TestAddNode(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"wantNodegroup": wantNodegroup,
 		},
@@ -128,7 +147,8 @@ func TestAddNode(t *testing.T) {
 		ConfigType: "json",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 
 	gotNodegroup, nodegroupErr := gotEnc.AddNode("wantNodegroup", "node-0001")
@@ -156,7 +176,9 @@ func TestAddNodes(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"wantNodegroup": wantNodegroup,
 		},
@@ -164,7 +186,8 @@ func TestAddNodes(t *testing.T) {
 		ConfigType: "json",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 
 	gotNodegroup, nodegroupErr := gotEnc.AddNodes("wantNodegroup", []string{"node-0001", "node-0002"})
@@ -189,7 +212,7 @@ func TestGetParentChain(t *testing.T) {
 	}
 
 	subNodegroup := Nodegroup{
-		Parent:      "wantNodegroup",
+		Parent:      "wantNodegroup@enc_test-json_data",
 		Classes:     make(map[string]interface{}, 0),
 		Nodes:       []string{},
 		Parameters:  make(map[string]interface{}, 0),
@@ -197,7 +220,7 @@ func TestGetParentChain(t *testing.T) {
 	}
 
 	subSubNodegroup := Nodegroup{
-		Parent:      "subNodegroup",
+		Parent:      "subNodegroup@enc_test-json_data",
 		Classes:     make(map[string]interface{}, 0),
 		Nodes:       []string{},
 		Parameters:  make(map[string]interface{}, 0),
@@ -205,7 +228,9 @@ func TestGetParentChain(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"wantNodegroup":   wantNodegroup,
 			"subNodegroup":    subNodegroup,
@@ -215,12 +240,13 @@ func TestGetParentChain(t *testing.T) {
 		ConfigType: "json",
 	}
 
-	wantChain := []string{"subSubNodegroup", "subNodegroup", "wantNodegroup"}
+	wantChain := []string{"subSubNodegroup@enc_test-json_data", "subNodegroup@enc_test-json_data", "wantNodegroup@enc_test-json_data"}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	conf.ENCs["enc_test-json_data"].Nodegroups = make(map[string]Nodegroup, 0)
+	gotEnc := conf.ENCs["enc_test-json_data"]
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
-	gotEnc.AddNodegroup("subNodegroup", "wantNodegroup", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
-	gotEnc.AddNodegroup("subSubNodegroup", "subNodegroup", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddNodegroup("subNodegroup", "wantNodegroup@enc_test-json_data", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddNodegroup("subSubNodegroup", "subNodegroup@enc_test-json_data", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 
 	gotChain := gotEnc.getParentChain("subSubNodegroup")
 
@@ -246,7 +272,7 @@ func TestGetLongestChain(t *testing.T) {
 	}
 
 	subNodegroup := Nodegroup{
-		Parent:  "wantNodegroup",
+		Parent:  "wantNodegroup@enc_test-json_data",
 		Classes: make(map[string]interface{}, 0),
 		Nodes: []string{
 			"node-0001",
@@ -256,7 +282,7 @@ func TestGetLongestChain(t *testing.T) {
 	}
 
 	subSubNodegroup := Nodegroup{
-		Parent:      "subNodegroup",
+		Parent:      "subNodegroup@enc_test-json_data",
 		Classes:     make(map[string]interface{}, 0),
 		Nodes:       []string{},
 		Parameters:  make(map[string]interface{}, 0),
@@ -264,7 +290,9 @@ func TestGetLongestChain(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"wantNodegroup":   wantNodegroup,
 			"subNodegroup":    subNodegroup,
@@ -274,17 +302,19 @@ func TestGetLongestChain(t *testing.T) {
 		ConfigType: "json",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
+	gotEnc.Name = "enc_test-json_data"
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
-	gotEnc.AddNodegroup("subNodegroup", "wantNodegroup", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
-	gotEnc.AddNodegroup("subSubNodegroup", "subNodegroup", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddNodegroup("subNodegroup", "wantNodegroup@enc_test-json_data", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddNodegroup("subSubNodegroup", "subNodegroup@enc_test-json_data", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 	gotEnc.AddNode("wantNodegroup", "node-0001")
 	gotEnc.AddNode("subNodegroup", "node-0001")
 
 	// We aren't testing the trie package
 	wantEnc.Nodes = gotEnc.Nodes
 
-	assert.Equal("node-0001-subNodegroup-wantNodegroup", gotEnc.getLongestChain("node-0001"))
+	assert.Equal("node-0001$$wantNodegroup@enc_test-json_data$$subNodegroup@enc_test-json_data", gotEnc.getLongestChain("node-0001"))
 	assert.Equal(wantEnc, *gotEnc)
 }
 
@@ -302,7 +332,7 @@ func TestRemoveNode(t *testing.T) {
 	}
 
 	subNodegroup := Nodegroup{
-		Parent:  "wantNodegroup",
+		Parent:  "wantNodegroup@enc_test-json_data",
 		Classes: make(map[string]interface{}, 0),
 		Nodes: []string{
 			"node-0001",
@@ -312,7 +342,7 @@ func TestRemoveNode(t *testing.T) {
 	}
 
 	subSubNodegroup := Nodegroup{
-		Parent:      "subNodegroup",
+		Parent:      "subNodegroup@enc_test-json_data",
 		Classes:     make(map[string]interface{}, 0),
 		Nodes:       []string{},
 		Parameters:  make(map[string]interface{}, 0),
@@ -320,7 +350,9 @@ func TestRemoveNode(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"wantNodegroup":   wantNodegroup,
 			"subNodegroup":    subNodegroup,
@@ -330,21 +362,27 @@ func TestRemoveNode(t *testing.T) {
 		ConfigType: "json",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
+	gotEnc.Name = "enc_test-json_data"
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
-	gotEnc.AddNodegroup("subNodegroup", "wantNodegroup", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
-	gotEnc.AddNodegroup("subSubNodegroup", "subNodegroup", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddNodegroup("subNodegroup", "wantNodegroup@enc_test-json_data", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
+	gotEnc.AddNodegroup("subSubNodegroup", "subNodegroup@enc_test-json_data", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 	gotEnc.AddNode("wantNodegroup", "node-0001")
 	gotEnc.AddNode("subNodegroup", "node-0001")
 
+	// Because of the nature of a trie, we only want the key to disappear if
+	// it has no children. wantNodegroup has one child so should remain
 	gotEnc.RemoveNode("wantNodegroup", "node-0001")
+	assert.NotNil(gotEnc.Nodes.Find("node-0001$$wantNodegroup@enc_test-json_data"))
+
+	// subNodegroup on the other hand has no children so will be removed
+	gotEnc.RemoveNode("subNodegroup", "node-0001")
+	assert.Nil(gotEnc.Nodes.Find("node-0001$$wantNodegroup@enc_test-json_data$$subNodegroup@enc_test-json_data"))
 
 	// We aren't testing the trie package
 	wantEnc.Nodes = gotEnc.Nodes
-
 	assert.Equal(wantEnc, *gotEnc)
-	assert.Nil(gotEnc.Nodes.Find("node-0001-wantNodegroup"))
-	assert.NotNil(gotEnc.Nodes.Find("node-0001-subNodegroup-wantNodegroup"))
 }
 
 func TestAddParameter(t *testing.T) {
@@ -361,7 +399,9 @@ func TestAddParameter(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"wantNodegroup": wantNodegroup,
 		},
@@ -369,7 +409,8 @@ func TestAddParameter(t *testing.T) {
 		ConfigType: "json",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 	gotEnc.AddParameter("wantNodegroup", "test_param", "test_value")
 
@@ -391,7 +432,9 @@ func TestRemoveParameter(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"wantNodegroup": wantNodegroup,
 		},
@@ -399,7 +442,8 @@ func TestRemoveParameter(t *testing.T) {
 		ConfigType: "json",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 	gotEnc.AddParameter("wantNodegroup", "test_param", "test_value")
 	gotEnc.RemoveParameter("wantNodegroup", "test_param")
@@ -424,7 +468,9 @@ func TestAddClass(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"wantNodegroup": wantNodegroup,
 		},
@@ -432,7 +478,8 @@ func TestAddClass(t *testing.T) {
 		ConfigType: "json",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 	gotEnc.AddClass("wantNodegroup", "test_class")
 
@@ -454,7 +501,9 @@ func TestRemoveClass(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"wantNodegroup": wantNodegroup,
 		},
@@ -462,7 +511,8 @@ func TestRemoveClass(t *testing.T) {
 		ConfigType: "json",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 	gotEnc.AddClass("wantNodegroup", "test_class")
 	gotEnc.RemoveClass("wantNodegroup", "test_class")
@@ -489,7 +539,9 @@ func TestAddClassParameter(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"wantNodegroup": wantNodegroup,
 		},
@@ -497,7 +549,8 @@ func TestAddClassParameter(t *testing.T) {
 		ConfigType: "json",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 	gotEnc.AddClass("wantNodegroup", "test_class")
 	gotEnc.AddClassParameter("wantNodegroup", "test_class", "test_class_param", "test_value")
@@ -522,7 +575,9 @@ func TestRemoveClassParameter(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"wantNodegroup": wantNodegroup,
 		},
@@ -530,7 +585,8 @@ func TestRemoveClassParameter(t *testing.T) {
 		ConfigType: "json",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 	gotEnc.AddClass("wantNodegroup", "test_class")
 	gotEnc.AddClassParameter("wantNodegroup", "test_class", "test_class_param", "test_value")
@@ -562,7 +618,9 @@ func TestSetParent(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"test_parent":   parentNodegroup,
 			"wantNodegroup": wantNodegroup,
@@ -571,7 +629,8 @@ func TestSetParent(t *testing.T) {
 		ConfigType: "json",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 	gotEnc.AddNodegroup("test_parent", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 	gotNodegroup, gotErr := gotEnc.SetParent("wantNodegroup", "test_parent")
@@ -596,7 +655,9 @@ func TestSetEnvironment(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"wantNodegroup": wantNodegroup,
 		},
@@ -604,7 +665,8 @@ func TestSetEnvironment(t *testing.T) {
 		ConfigType: "json",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}, 0), []string{}, make(map[string]interface{}, 0))
 	gotNodegroup, gotErr := gotEnc.SetEnvironment("wantNodegroup", "test_env")
 
@@ -635,7 +697,7 @@ func TestGetNode(t *testing.T) {
 	}
 
 	subNodegroup := Nodegroup{
-		Parent: "wantNodegroup",
+		Parent: "wantNodegroup@enc_test-json_data",
 		Classes: map[string]interface{}{
 			"test_class": map[string]interface{}{
 				"unique_test": "I've never been overriden",
@@ -652,7 +714,7 @@ func TestGetNode(t *testing.T) {
 	}
 
 	subSubNodegroup := Nodegroup{
-		Parent: "subNodegroup",
+		Parent: "subNodegroup@enc_test-json_data",
 		Classes: map[string]interface{}{
 			"test_class": map[string]interface{}{
 				"override_me": "I'm legit",
@@ -669,7 +731,9 @@ func TestGetNode(t *testing.T) {
 	}
 
 	wantEnc := ENC{
-		FileName: "/tmp/test.json",
+		ConfigLink: conf,
+		Name:       "enc_test-json_data",
+		FileName:   "/tmp/enc_test-json_data.json",
 		Nodegroups: map[string]Nodegroup{
 			"wantNodegroup":   wantNodegroup,
 			"subNodegroup":    subNodegroup,
@@ -680,7 +744,7 @@ func TestGetNode(t *testing.T) {
 	}
 
 	wantNode := Nodegroup{
-		Parent: "subNodegroup",
+		Parent: "",
 		Classes: map[string]interface{}{
 			"test_class": map[string]interface{}{
 				"override_me": "I'm legit",
@@ -696,19 +760,18 @@ func TestGetNode(t *testing.T) {
 				"unique_test": "I've never been overriden",
 			},
 		},
-		Nodes: []string{
-			"node-0001",
-		},
+		Nodes: nil,
 		Parameters: map[string]interface{}{
 			"test_param": "test_value",
 		},
 		Environment: "env_two",
 	}
 
-	gotEnc := NewENC("json", "/tmp/test.json")
+	gotEnc := conf.ENCs["enc_test-json_data"]
+	gotEnc.Nodegroups = make(map[string]Nodegroup, 0)
 	gotEnc.AddNodegroup("wantNodegroup", "", make(map[string]interface{}), []string{}, make(map[string]interface{}))
-	gotEnc.AddNodegroup("subNodegroup", "wantNodegroup", make(map[string]interface{}), []string{}, make(map[string]interface{}))
-	gotEnc.AddNodegroup("subSubNodegroup", "subNodegroup", make(map[string]interface{}), []string{}, make(map[string]interface{}))
+	gotEnc.AddNodegroup("subNodegroup", "wantNodegroup@enc_test-json_data", make(map[string]interface{}), []string{}, make(map[string]interface{}))
+	gotEnc.AddNodegroup("subSubNodegroup", "subNodegroup@enc_test-json_data", make(map[string]interface{}), []string{}, make(map[string]interface{}))
 
 	gotEnc.AddNode("subSubNodegroup", "node-0001")
 

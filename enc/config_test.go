@@ -140,6 +140,7 @@ func testNewJSONConfig(t *testing.T) {
   assert := assert.New(t)
 
   wantEnc := ENC{
+    Name: "enc_test-json_data",
     Nodegroups: map[string]Nodegroup{
       "globals": Nodegroup{
         Classes: map[string]interface{}{
@@ -198,13 +199,17 @@ func testNewJSONConfig(t *testing.T) {
   }
 
   gotJSONConfig := NewConfig(jsonFile)
-  assert.Equal(wantEnc, *gotJSONConfig.ENCs["enc_test-json_data"])
+
+  gotENC := gotJSONConfig.ENCs["enc_test-json_data"]
+  gotENC.ConfigLink = nil
+  assert.Equal(wantEnc, *gotENC)
 }
 
 func testNewYAMLConfig(t *testing.T) {
   assert := assert.New(t)
 
   wantEnc := ENC{
+    Name: "enc_test-yaml_data",
     Nodegroups: map[string]Nodegroup{
       "globals": Nodegroup{
         Classes: map[string]interface{}{
@@ -263,5 +268,7 @@ func testNewYAMLConfig(t *testing.T) {
   }
 
   gotYAMLConfig := NewConfig(yamlFile)
-  assert.Equal(wantEnc, *gotYAMLConfig.ENCs["enc_test-yaml_data"])
+  gotENC := gotYAMLConfig.ENCs["enc_test-yaml_data"]
+  gotENC.ConfigLink = nil
+  assert.Equal(wantEnc, *gotENC)
 }
