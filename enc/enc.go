@@ -223,8 +223,12 @@ func (enc *ENC) GetChains(nodeName string) ([]string, error) {
 }
 
 func (enc *ENC) travelChain(root *trie.Node, currentChain string) []string {
-	var emptyChain []string
+	var trackerChain []string
 	for letter, node := range root.Children() {
+		if len(root.Children()) > 1 && string(letter) == "\x00" {
+			continue
+		}
+
 		newChain := currentChain
 		if string(letter) != "\x00" {
 			newChain = newChain + string(letter)
@@ -232,13 +236,13 @@ func (enc *ENC) travelChain(root *trie.Node, currentChain string) []string {
 
 		if len(node.Children()) > 0 {
 			childChains := enc.travelChain(node, newChain)
-			emptyChain = append(emptyChain, childChains...)
+			trackerChain = append(trackerChain, childChains...)
 		} else {
-			emptyChain = append(emptyChain, newChain)
+			trackerChain = append(trackerChain, newChain)
 		}
 	}
 
-	return emptyChain
+	return trackerChain
 }
 
 // mergeNodegroups merges two nodegroups, preserving values exclusive to ngA and overwriting with
