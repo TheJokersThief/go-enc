@@ -387,34 +387,10 @@ func (enc *ENC) mergeNodegroups(ngA *Nodegroup, ngB *Nodegroup) *Nodegroup {
 		newNG.Environment = ngB.Environment
 	}
 
-	newNG.Classes = enc.mergeNestedMaps(ngA.Classes, ngB.Classes)
-	newNG.Parameters = enc.mergeNestedMaps(ngA.Parameters, ngB.Parameters)
+	newNG.Classes = MergeNestedMaps(ngA.Classes, ngB.Classes)
+	newNG.Parameters = MergeNestedMaps(ngA.Parameters, ngB.Parameters)
 
 	return &newNG
-}
-
-// mergeNestedMaps travels nested maps and adds the values from mapB into mapA (overwriting
-// what exists and preserving what's unique in both)
-func (enc *ENC) mergeNestedMaps(mapA map[string]interface{}, mapB map[string]interface{}) map[string]interface{} {
-	for key, val := range mapB {
-		if reflect.ValueOf(val).Kind() == reflect.Map {
-			if aVal, ok := mapA[key]; ok && reflect.ValueOf(aVal).Kind() == reflect.Map {
-				mapA[key] = enc.mergeNestedMaps(aVal.(map[string]interface{}), val.(map[string]interface{}))
-			} else {
-				if mapA == nil {
-					mapA = make(map[string]interface{})
-				}
-				mapA[key] = val
-			}
-		} else {
-			if mapA == nil {
-				mapA = make(map[string]interface{})
-			}
-			mapA[key] = val
-		}
-	}
-
-	return mapA
 }
 
 // AddParameter add a parameter to a nodegroup
