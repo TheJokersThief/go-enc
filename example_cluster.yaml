@@ -1,0 +1,38 @@
+website:
+  parameters:
+  nodes:
+  - webserver-0004
+  - webserver-0005
+  - webserver-0006
+  - webserver-0007
+website_canary:
+  parent: website@example_cluster
+  parameters:
+  nodes:
+  - webserver-0004
+annotationservers_active:
+  parent: website@example_cluster
+  parameters:
+  nodes:
+  - webserver-0005
+appservers_active:
+  parent: website@example_cluster
+  parameters:
+  nodes:
+  - webserver-0004
+  - webserver-0005
+  - webserver-0006
+  - webserver-0007
+webservers_api_active:
+  parent: website@example_cluster
+  parameters:
+  nodes:
+  - webserver-0004
+  - webserver-0005
+  - webserver-0007
+  - webserver-0006
+internal_api_active:
+  parent: website@example_cluster
+  parameters:
+  nodes:
+  - webserver-0004
